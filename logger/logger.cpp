@@ -59,6 +59,9 @@ Logger :: ~Logger()
 
 void Logger :: write_msg(LOG_LVL lvl, int *nums, int n)
 {
+	if(lvl >= (this->max_lvl << 1))
+		return;
+
 	char cmds[512];
 	sprintf(cmds, "%d", lvl);
 	for(int i = 0; i < n; i++)
