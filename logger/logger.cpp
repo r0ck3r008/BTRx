@@ -11,7 +11,7 @@ using std::cerr;
 
 #include"logger/logger.h"
 
-Logger :: Logger(string fname)
+Logger :: Logger(string fname, LOG_LVL lvl_max)
 {
 	FILE *f = NULL;
 	if(fname == "stdout") {
@@ -42,6 +42,7 @@ Logger :: Logger(string fname)
 		/* parent */
 		close(sock[0]);
 		this->sock = sock[1];
+		this->max_lvl = lvl_max;
 	}
 }
 

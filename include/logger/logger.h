@@ -28,8 +28,9 @@ typedef enum LOG_TYPE: uint16_t {
 
 class Logger {
 	int sock;
+	LOG_LVL max_lvl;
 public:
-	Logger(string);
+	Logger(string, LOG_LVL);
 	~Logger();
 	void write_msg(LOG_LVL, int *, int);
 };
