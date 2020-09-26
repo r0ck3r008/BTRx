@@ -1,0 +1,3 @@
+*.pdf
+!doc/project_logistics.pdf
+!doc/project_description.pdf
