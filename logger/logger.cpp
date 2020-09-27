@@ -64,8 +64,11 @@ void Logger :: write_msg(LOG_LVL lvl, int *nums, int n)
 
 	char cmds[512];
 	sprintf(cmds, "%d", lvl);
-	for(int i = 0; i < n; i++)
-		sprintf(cmds, "%s:%d", cmds, nums[i]);
+	for(int i = 0; i < n; i++) {
+		char tmp[16];
+		sprintf(tmp, ":%d", nums[i]);
+		strcat(cmds, tmp);
+	}
 
 	if(write(this->sock, cmds, 512 * sizeof(char)) < 0) {
 		cerr << "LOGGER: Write: Error writing to child: "
