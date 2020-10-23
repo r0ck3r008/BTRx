@@ -3,3 +3,4 @@
 !doc/project_description.pdf
 tmp/*
 !tmp/.gitkeep
+*.pb.*
