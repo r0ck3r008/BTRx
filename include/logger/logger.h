@@ -5,14 +5,20 @@
 
 using std::string;
 
-typedef enum LOG_LVL: uint16_t {
-	LOG_DBG = 1 << 12,
-	LOG_INFO = 1 << 13,
-	LOG_WRN = 1 << 14,
-	LOG_ERR = 1 << 15
+typedef enum LOG_LVL: uint32_t {
+	LOG_TCP = 1 << 12,
+	LOG_CPN = 1 << 13,
+	LOG_COUN = 1 << 14,
+	LOG_UC = 1 << 15,
+	LOG_C = 1 << 16,
+	LOG_HMSSG = 1 << 17,
+	LOG_IMSSG = 1 << 18,
+	LOG_NIMSSG = 1 << 19,
+	LOG_DP = 1 << 20,
+	LOG_CD = 1 << 21
 } LOG_LVL;
 
-typedef enum LOG_TYPE: uint16_t {
+typedef enum LOG_TYPE: uint32_t {
 	LOG_CXNT = (1 << 1) | LOG_WRN,
 	LOG_CXNR = (1 << 2) | LOG_WRN,
 	LOG_NBR = (1 << 3) | LOG_WRN,
