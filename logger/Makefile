@@ -12,5 +12,8 @@ logmsg: logmsg.proto
 
 clean:
 	rm -rf *.o
+
+clean_proto:
 	rm -rf logmsg.pb.cc
 	rm -rf ${COMPILE_PATH}/logger/logmsg.pb.h
+

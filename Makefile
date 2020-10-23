@@ -18,3 +18,6 @@ clean_objs:
 
 clean: clean_objs
 	rm -rf bin/*.out
+
+distclean: clean
+	COMPILE_PATH=${COMPILE_PATH} $(MAKE) -C logger/ clean_proto
