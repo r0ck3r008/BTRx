@@ -1,9 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include<stdarg.h>
+#include<vector>
 
 using std::string;
+using std::vector;
 
 typedef enum LOG_LVL: uint32_t {
 	LOG_TCP = 1 << 12,
@@ -35,11 +36,11 @@ typedef enum LOG_TYPE: uint32_t {
 namespace logger {
 	class Logger {
 		int sock;
-		LogLvlT max_lvl;
+		LogMsgT::LogLvlT max_lvl;
 	public:
-		Logger(string, LogLvlT);
+		Logger(string, LogMsgT::LogLvlT);
 		~Logger();
-		void write_msg(LogLvlT, int *, int);
+		void write_msg(LogMsgT :: LogLvlT, char *, ...);
 	};
 }
 
