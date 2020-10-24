@@ -48,8 +48,10 @@ int sock_create(char *addr, int port)
 
 Node :: Node(int peerid, char *addr, int port, vector<string>& peer)
 {
-	if((this->sock = sock_create(addr, port)) < 0)
+	int sock = 0;
+	if((sock = sock_create(addr, port)) < 0)
 		_exit(1);
+	this->sock = vector<int>(sock);
 
 	this->peerid = peerid;
 
