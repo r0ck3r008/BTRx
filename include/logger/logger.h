@@ -40,7 +40,8 @@ namespace logger {
 	public:
 		Logger(string, LogMsgT::LogLvlT);
 		~Logger();
-		void write_msg(LogMsgT :: LogLvlT, char *, ...);
+		void write_msg(LogMsgT :: LogLvlT,
+				char *, ...);
 	};
 }
 

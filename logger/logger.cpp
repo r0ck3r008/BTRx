@@ -7,6 +7,7 @@
 #include<errno.h>
 
 #include"logger/logchild.h"
+#include"logger/logmsg.pb.h"
 #include"logger/logger.h"
 
 using std::endl;
