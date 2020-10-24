@@ -46,9 +46,14 @@ int sock_create(char *addr, int port)
 	return sock;
 }
 
-void Node :: srvloop()
+Node :: Node(int peerid, char *addr, int port, vector<string>& peer)
 {
+	if((this->sock = sock_create(addr, port)) < 0)
+		_exit(1);
 
+	this->peerid = peerid;
+
+	this->connback(peer);
 }
 
 Node :: ~Node()

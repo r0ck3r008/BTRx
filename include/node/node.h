@@ -8,7 +8,7 @@ namespace node {
 		int sock;
 		int peerid;
 	public:
-		Node(int, char *, int);
+		Node(int, char *, int, vector<string>&);
 		~Node();
 		void srvloop();
 	};
