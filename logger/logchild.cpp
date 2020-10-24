@@ -3,7 +3,6 @@
 #include<unistd.h>
 #include<errno.h>
 
-#include"logger/logmsg.pb.h"
 #include"logger/logchild.h"
 
 using logger::LogChild;

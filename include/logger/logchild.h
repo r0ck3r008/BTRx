@@ -3,6 +3,8 @@
 
 #include<stdio.h>
 
+#include"logger/logmsg.pb.h"
+
 using logger::LogMsgT;
 
 namespace logger {
