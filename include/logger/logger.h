@@ -32,13 +32,15 @@ typedef enum LOG_TYPE: uint32_t {
 	LOG_DWLD = (1 << 11) | LOG_WRN,
 } LOG_TYPE;
 
-class Logger {
-	int sock;
-	LOG_LVL max_lvl;
-public:
-	Logger(string, LOG_LVL);
-	~Logger();
-	void write_msg(LOG_LVL, int *, int);
-};
+namespace logger {
+	class Logger {
+		int sock;
+		LogLvlT max_lvl;
+	public:
+		Logger(string, LogLvlT);
+		~Logger();
+		void write_msg(LogLvlT, int *, int);
+	};
+}
 
 #endif

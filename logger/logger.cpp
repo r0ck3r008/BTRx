@@ -5,13 +5,15 @@
 #include<unistd.h>
 #include<errno.h>
 
+#include"logger/logchild.h"
+#include"logger/logger.h"
+
 using std::endl;
 using std::string;
 using std::cerr;
+using namespace logger;
 
-#include"logger/logger.h"
-
-Logger :: Logger(string fname, LOG_LVL lvl_max)
+Logger :: Logger(string fname, LogLvlT lvl_max)
 {
 	FILE *f = NULL;
 	if(fname == "stdout") {
@@ -32,8 +34,9 @@ Logger :: Logger(string fname, LOG_LVL lvl_max)
 	if(!child_pid) {
 		/* child */
 		close(sock[1]);
-		/* TODO */
-		_exit(1);
+		LogChild lchild(sock[0], f);
+		lchild.srvloop();
+		_exit(0);
 	} else if (child_pid < 0) {
 		/* err */
 		cerr << "LOGGER: Fork: " << strerror(errno) << endl;
@@ -57,7 +60,7 @@ Logger :: ~Logger()
 	close(this->sock);
 }
 
-void Logger :: write_msg(LOG_LVL lvl, int *nums, int n)
+void Logger :: write_msg(LogLvlT lvl, int *nums, int n)
 {
 	if(lvl >= (this->max_lvl << 1))
 		return;
