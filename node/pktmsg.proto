@@ -1,0 +1,22 @@
+syntax = "proto3";
+package node;
+
+enum PktT {
+	CHOKE = 0;
+	UNCHOKE = 2;
+	INTERESTED = 4;
+	NOT_INTERESTED = 8;
+	HAVE = 16;
+	BITFIELD = 32;
+	REQUEST = 64;
+	PIECE = 128;
+	HSHAKE = 256;
+}
+
+message PktMsgT {
+	optional uint32 Len = 1;
+	optional string Hstring = 2;
+	PktT Type = 3;
+	optional string Payload = 4;
+	optional uint32 PeerId = 5;
+}
