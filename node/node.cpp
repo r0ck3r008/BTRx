@@ -60,3 +60,13 @@ Node :: ~Node()
 {
 	close(this->sock);
 }
+
+int Node :: connback(vector<string>& peers)
+{
+	return 1;
+}
+
+void Node :: srvloop()
+{
+
+}

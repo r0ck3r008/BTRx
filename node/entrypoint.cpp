@@ -27,7 +27,10 @@ void read_peer_info(string& fname, vector<string>& peers)
 	char *line = NULL;
 	size_t n = 0;
 	while(getline(&line, &n, f) > 0) {
-
+		peers.push_back(string(line));
+		free(line);
+		line = NULL;
+		n = 0;
 	}
 }
 
