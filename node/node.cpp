@@ -46,7 +46,7 @@ int sock_create(char *addr, int port)
 	return sock;
 }
 
-Node :: Node(int peerid, char *addr, int port, vector<string>& peer)
+Node :: Node(int peerid, char *addr, int port, vector<char *>& peer)
 {
 	int sock = 0;
 	if((sock = sock_create(addr, port)) < 0)

@@ -15,7 +15,7 @@ using std::string;
 
 Logger *lvar;
 
-void read_peer_info(string& fname, vector<string>& peers)
+void read_peer_info(string& fname, vector<char *>& peers)
 {
 	FILE *f = NULL;
 	if((f = fopen(fname.c_str(), "r")) == NULL) {
@@ -27,8 +27,7 @@ void read_peer_info(string& fname, vector<string>& peers)
 	char *line = NULL;
 	size_t n = 0;
 	while(getline(&line, &n, f) > 0) {
-		peers.push_back(string(line));
-		free(line);
+		peers.push_back(line);
 		line = NULL;
 		n = 0;
 	}
@@ -44,7 +43,7 @@ int main(int argc, char **argv)
 	string fname = "./log_peer_" + string(argv[1]);
 	lvar = new Logger(fname, LogMsgT::LOG_DBG);
 
-	vector<string> peers;
+	vector<char *> peers;
 	fname = "./peer_" + string(argv[1]) + "/" + "PeerInfo.cfg";
 	read_peer_info(fname, peers);
 

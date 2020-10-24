@@ -12,7 +12,7 @@ namespace node {
 		vector<int> sock;
 		int peerid;
 	public:
-		Node(int, char *, int, vector<string>&);
+		Node(int, char *, int, vector<char *>&);
 		~Node();
 		void srvloop();
 	};
