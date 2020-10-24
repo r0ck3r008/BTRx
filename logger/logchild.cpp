@@ -3,99 +3,94 @@
 #include<unistd.h>
 #include<errno.h>
 
-#include"logchild.h"
+#include"logger/logmsg.pb.h"
+#include"logger/logchild.h"
 
-Logchild *logchild_init(int sock, char *path, LOG_LVL lvl)
+using logger::LogChild;
+using logger::LogMsgT;
+
+LogChild :: LogChild(int sock, FILE *outf, LogMsgT::LogLvlT lvl)
 {
-	Logchild *lchild=calloc(1, sizeof(Logchild));
-	if(lchild==NULL) {
-		fprintf(stderr, "[-]LOGCHILD: Error in allocating memory!\n");
-		return NULL;
-	}
-	lchild->sock=sock;
-	lchild->lvl=lvl;
-	if(!strcmp("-", path)) {
-		lchild->outf=stdout;
-	} else if((lchild->outf=fopen(path, "w"))==NULL) {
-		fprintf(stderr, "[-]LOGCHILD: Fopen: %s\n", strerror(errno));
-		return NULL;
-	}
-
-	return lchild;
+	this->sock=sock;
+	this->lvl=lvl;
+	this->outf=outf;
 }
 
-int logchild_pretty_p(Logchild *lchild, char *buf)
+LogChild :: ~LogChild()
 {
-	LOG_LVL loglvl=(LOG_LVL)strtol(strtok(buf, "$"), NULL, 10);
-	if(loglvl < lchild->lvl)
-		return 1;
-	switch(loglvl) {
-	case LOG_TCP:
-		fprintf(lchild->outf, "[TCPCONNECTION] ");
-		break;
-	case LOG_CPN:
-		fprintf(lchild->outf, "[CHANGEOFPREFERREDNEIGHBORS] ");
-		break;
-	case LOG_COUN:
-		fprintf(lchild->outf, "[CHANGEOFOPTIMISTICALLYUNCHOKEDNEIGHBOR] ");
-		break;
-	case LOG_UC:
-		fprintf(lchild->outf, "[UNCHOKING] ");
-		break;
-	case LOG_C:
-		fprintf(lchild->outf, "[CHOKING] ");
-		break;
-	case LOG_HMSSG:
-		fprintf(lchild->outf, "[RECEIVINGHAVEMESSAGE] ");
-		break;
-	case LOG_IMSSG:
-		fprintf(lchild->outf, "[RECEIVINGINTERESTEDMESSAGE] ");
-		break;
-	case LOG_NIMSSG:
-		fprintf(lchild->outf, "[RECEIVINGNOTINTERESTEDMESSAGE] ");
-		break;
-	case LOG_PD:
-		fprintf(lchild->outf, "[DOWLOADINGAPIECE] ");
-		break;
-	case LOG_CD:
-		fprintf(lchild->outf, "[COMPLETIONOFDOWNLOAD] ");
-		break;
-	default:
-		fprintf(lchild->outf, "LOGCHILD: Unknown log level!\n");
-		return 0;
-	}
-	fprintf(lchild->outf, "%s\n", strtok(NULL, "$"));
-
-	return 1;
+	close(this->sock);
+	if(this->outf!=stdout)
+		fclose(this->outf);
 }
 
-void logchild_exec(Logchild *lchild)
+void LogChild :: srvloop()
 {
+	/*TODO
+	 * Demarshal the LogLvlT and pass that as a class to the pretty_p
+	 * function.
+	 **/
+	/*
 	while(1) {
 		char buf[1024];
 		int stat=1;
-		if((stat=read(lchild->sock, buf, sizeof(char)*1024))<0) {
-			fprintf(lchild->outf, "[-]LOGCHILD: Read: %s\n",
+		if((stat=read(this->sock, buf, sizeof(char)*1024))<0) {
+			fprintf(this->outf, "[-]LOGCHILD: Read: %s\n",
 							strerror(errno));
 			break;
 		} else if(!stat) {
-			fprintf(lchild->outf,
+			fprintf(this->outf,
 				"[-]LOGCHILD: READ: Empty read\n");
 			break;
 		}
 		if(!strcmp("EXIT", buf))
 			break;
-		else if(!logchild_pretty_p(lchild, buf))
+		else if(!this->pretty_p(buf))
 			break;
 	}
-
-	logchild_deinit(lchild);
+	*/
 }
 
-void logchild_deinit(Logchild *lchild)
+int LogChild :: pretty_p(LogMsgT *lmsg)
 {
-	close(lchild->sock);
-	if(lchild->outf!=stdout)
-		fclose(lchild->outf);
-	free(lchild);
+	/*
+	switch(loglvl) {
+	case LOG_TCP:
+		fprintf(this->outf, "[TCPCONNECTION] ");
+		break;
+	case LOG_CPN:
+		fprintf(this->outf, "[CHANGEOFPREFERREDNEIGHBORS] ");
+		break;
+	case LOG_COUN:
+		fprintf(this->outf, "[CHANGEOFOPTIMISTICALLYUNCHOKEDNEIGHBOR] ");
+		break;
+	case LOG_UC:
+		fprintf(this->outf, "[UNCHOKING] ");
+		break;
+	case LOG_C:
+		fprintf(this->outf, "[CHOKING] ");
+		break;
+	case LOG_HMSSG:
+		fprintf(this->outf, "[RECEIVINGHAVEMESSAGE] ");
+		break;
+	case LOG_IMSSG:
+		fprintf(this->outf, "[RECEIVINGINTERESTEDMESSAGE] ");
+		break;
+	case LOG_NIMSSG:
+		fprintf(this->outf, "[RECEIVINGNOTINTERESTEDMESSAGE] ");
+		break;
+	case LOG_PD:
+		fprintf(this->outf, "[DOWLOADINGAPIECE] ");
+		break;
+	case LOG_CD:
+		fprintf(this->outf, "[COMPLETIONOFDOWNLOAD] ");
+		break;
+	default:
+		fprintf(this->outf, "LOGCHILD: Unknown log level!\n");
+		return 0;
+	}
+	fprintf(this->outf, "%s\n", strtok(NULL, "$"));
+
+	*/
+	return 1;
 }
+

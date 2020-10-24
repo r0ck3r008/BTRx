@@ -3,18 +3,21 @@
 
 #include<stdio.h>
 
-#include"logger.h"
+using logger::LogMsgT;
 
-typedef struct Logchild
-{
-	int sock;
-	LOG_LVL lvl;
-	FILE *outf;
-} Logchild;
+namespace logger {
+	class LogChild {
+		int sock;
+		LogMsgT::LogLvlT lvl;
+		FILE *outf;
+	public:
+		LogChild(int, FILE *,
+				LogMsgT::LogLvlT);
+		~LogChild();
+		void srvloop();
+		int pretty_p(LogMsgT *);
+	};
+}
 
-Logchild *logchild_init(int, char *, LOG_LVL);
-int logchild_pretty_p(Logchild *, char *);
-void logchild_exec(Logchild *);
-void logchild_deinit(Logchild *);
 
 #endif
