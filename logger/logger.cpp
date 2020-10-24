@@ -73,6 +73,7 @@ void Logger :: write_msg(LogMsgT :: LogLvlT log_lvl, string msg, ...)
 	va_start(args, msg);
 	vsprintf(tmp, msg.c_str(), args);
 	lmsg.set_logmsg(tmp);
+	lmsg.set_loglvl(log_lvl);
 
 	size_t size = lmsg.ByteSizeLong();
 	char cmds[size] = {0};
