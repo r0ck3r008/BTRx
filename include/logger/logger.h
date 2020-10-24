@@ -16,7 +16,7 @@ namespace logger {
 		Logger(string, LogMsgT::LogLvlT);
 		~Logger();
 		void write_msg(LogMsgT :: LogLvlT,
-				char *, ...);
+				string, ...);
 	};
 }
 

@@ -62,7 +62,7 @@ Logger :: ~Logger()
 }
 
 /* Good for log_{dbg,wrn,err} */
-void Logger :: write_msg(LogMsgT :: LogLvlT log_lvl, char *msg, ...)
+void Logger :: write_msg(LogMsgT :: LogLvlT log_lvl, string msg, ...)
 {
 	if(log_lvl > (this->max_lvl))
 		return;
@@ -71,7 +71,7 @@ void Logger :: write_msg(LogMsgT :: LogLvlT log_lvl, char *msg, ...)
 	char tmp[512] = {0};
 	va_list args;
 	va_start(args, msg);
-	vsprintf(tmp, msg, args);
+	vsprintf(tmp, msg.c_str(), args);
 	lmsg.set_logmsg(tmp);
 
 	size_t size = lmsg.ByteSizeLong();
