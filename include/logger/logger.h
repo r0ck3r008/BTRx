@@ -3,6 +3,8 @@
 
 #include<vector>
 
+#include"logger/logmsg.pb.h"
+
 using std::string;
 using std::vector;
 
