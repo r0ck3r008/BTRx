@@ -15,12 +15,13 @@ using logger::Logger;
 
 extern Logger *lvar;
 
-Node :: Node(int peerid, char *addr, int port)
+int sock_create(char *addr, int port)
 {
-	if((this->sock=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	int sock = 0;
+	if((sock=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Socket: %s",
 				strerror(errno));
-		_exit(1);
+		return -1;
 	}
 
 	struct sockaddr_in saddr;
@@ -29,19 +30,20 @@ Node :: Node(int peerid, char *addr, int port)
 	saddr.sin_addr.s_addr = inet_addr(addr);
 	saddr.sin_family = AF_INET;
 
-	if(bind(this->sock, (struct sockaddr *)&saddr,
+	if(bind(sock, (struct sockaddr *)&saddr,
 			sizeof(struct sockaddr_in)) < 0) {
 		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Bind: %s",
 				strerror(errno));
-		_exit(1);
+		close(sock);
+		return -1;
 	}
-	if(listen(this->sock, 5) < 0) {
+	if(listen(sock, 5) < 0) {
 		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Listen: %s",
 				strerror(errno));
-		_exit(1);
+		close(sock);
+		return -1;
 	}
-
-	this->peerid = peerid;
+	return sock;
 }
 
 void Node :: srvloop()
