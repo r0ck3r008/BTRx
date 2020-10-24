@@ -9,10 +9,9 @@
 using logger::LogChild;
 using logger::LogMsgT;
 
-LogChild :: LogChild(int sock, FILE *outf, LogMsgT::LogLvlT lvl)
+LogChild :: LogChild(int sock, FILE *outf)
 {
 	this->sock=sock;
-	this->lvl=lvl;
 	this->outf=outf;
 }
 

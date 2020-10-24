@@ -8,11 +8,9 @@ using logger::LogMsgT;
 namespace logger {
 	class LogChild {
 		int sock;
-		LogMsgT::LogLvlT lvl;
 		FILE *outf;
 	public:
-		LogChild(int, FILE *,
-				LogMsgT::LogLvlT);
+		LogChild(int, FILE *);
 		~LogChild();
 		void srvloop();
 		int pretty_p(LogMsgT *);
