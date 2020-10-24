@@ -11,6 +11,9 @@ namespace node {
 	class Node {
 		vector<int> sock;
 		int peerid;
+		bool hasfile;
+	private:
+		void connback(vector<char *>&);
 	public:
 		Node(int, char *, int, vector<char *>&);
 		~Node();

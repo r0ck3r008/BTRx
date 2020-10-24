@@ -2,6 +2,8 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
+#include<sys/types.h>
+#include<netdb.h>
 #include<string.h>
 #include<unistd.h>
 #include<errno.h>
@@ -60,12 +62,50 @@ Node :: Node(int peerid, char *addr, int port, vector<char *>& peer)
 
 Node :: ~Node()
 {
-	close(this->sock);
+	for(auto i: this->sock)
+		close(i);
 }
 
-int Node :: connback(vector<string>& peers)
+void Node :: connback(vector<char *>& peers)
 {
-	return 1;
+	struct addrinfo hints, *res;
+	explicit_bzero(&hints, sizeof(struct addrinfo));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol= IPPROTO_TCP;
+	size_t len = sizeof(struct sockaddr);
+	int sock;
+
+	for(int i=0; i<peers.size(); i++) {
+		char *line = peers[i];
+		int peerid = strtol(strtok(line, " "), NULL, 10);
+		char *hname = strtok(NULL, " ");
+		char *port = strtok(NULL, " ");
+		bool hasfile = (bool)strtol(strtok(NULL, " "), NULL, 10);
+
+		if(this->peerid == peerid) {
+			if(hasfile)
+				/* TODO: Read in File */
+			break;
+		}
+		if(getaddrinfo(hname, port, &hints, &res) < 0) {
+			lvar->write_msg(LogMsgT::LOG_ERR, "NODE: Getaddrinfo: %s",
+					strerror(errno));
+			_exit(1);
+		}
+		struct addrinfo *curr = res;
+		if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+			lvar->write_msg(LogMsgT::LOG_ERR, "NODE: Sock: %s",
+					strerror(errno));
+			_exit(1);
+		}
+		for(curr; curr != NULL; curr = curr->ai_next) {
+			if(connect(sock, curr->ai_addr, len) == 0) {
+				this->sock.push_back(sock);
+				break;
+			}
+		}
+	}
 }
 
 void Node :: srvloop()
