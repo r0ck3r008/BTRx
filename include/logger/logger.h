@@ -13,7 +13,7 @@ namespace logger {
 		int sock;
 		LogMsgT::LogLvlT max_lvl;
 	public:
-		Logger(string, LogMsgT::LogLvlT);
+		Logger(string&, LogMsgT::LogLvlT);
 		~Logger();
 		void write_msg(LogMsgT :: LogLvlT,
 				string, ...);

@@ -14,7 +14,7 @@ using std::string;
 using std::cerr;
 using namespace logger;
 
-Logger :: Logger(string fname, LogMsgT::LogLvlT lvl_max)
+Logger :: Logger(string& fname, LogMsgT::LogLvlT lvl_max)
 {
 	FILE *f = NULL;
 	if(fname == "stdout") {
