@@ -75,9 +75,10 @@ void Node :: connback(vector<char *>& peers)
 	hints.ai_protocol= IPPROTO_TCP;
 	size_t len = sizeof(struct sockaddr);
 	int sock;
+	char line[512];
 
 	for(int i=0; i<peers.size(); i++) {
-		char *line = peers[i];
+		strncpy(line, peers[i], 512 * sizeof(char));
 		int peerid = strtol(strtok(line, " "), NULL, 10);
 		char *hname = strtok(NULL, " ");
 		char *port = strtok(NULL, " ");
@@ -105,6 +106,8 @@ void Node :: connback(vector<char *>& peers)
 				break;
 			}
 		}
+		explicit_bzero(line, 512 * sizeof(char));
+		free(peers[i]);
 	}
 }
 
