@@ -1,5 +1,7 @@
 #include<iostream>
 #include<vector>
+#include<queue>
+#include<unordered_map>
 #include<stdio.h>
 #include<string.h>
 #include<sys/types.h>
@@ -15,8 +17,11 @@
 using logger::Logger;
 using logger::LogMsgT;
 using node::ObjStore;
+using std::unordered_map;
+using std::multimap;
 using std::vector;
 using std::string;
+using std::less;
 
 extern Logger *lvar;
 
@@ -26,6 +31,9 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 	this->pcsz = pcsz;
 	this->npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
 	this->fname = fname;
+	this->cmap = unordered_map<int, char *>();
+	this->fmap = unordered_map<int, int>();
+	this->fque = multiset<int, std::less<int>>();
 }
 
 ObjStore :: ~ObjStore()
@@ -86,4 +94,70 @@ void ObjStore :: bfield_flip(int pos)
 	int lftovr = pos % 64;
 	uint64_t mask = 1<<lftovr;
 	this->bfield[wholes] ^= mask;
+}
+
+int ObjStore :: get_pos(int pcno)
+{
+	/* Converts the piece number to its starting position in file */
+	return this->pcsz * pcno;
+}
+
+int ObjStore :: add_piece(int pcno, char *piece)
+{
+	if(this->bfield_exists(pcno))
+		/* Piece already exists, return err */
+		return 0;
+	int pos = this->get_pos(pcno);
+	if(lseek(this->fd, pos, SEEK_SET) < 0) {
+		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Lseek: %s",
+				strerror(errno));
+		_exit(1);
+	}
+	if(write(this->fd, piece, sizeof(char) * this->pcsz) < 0) {
+		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Write: %s",
+				strerror(errno));
+		_exit(1);
+	}
+	this->bfield_flip(pcno);
+	/* TODO: Add to cache */
+
+	return 1;
+}
+
+int ObjStore :: get_piece(int pcno, char *buf)
+{
+	if(this->bfield_exists(pcno))
+		/* Piece cannot exist, return err */
+		return 0;
+	int pos = this->get_pos(pcno);
+	auto itr = this->cmap.find(pos);
+	if(itr != this->cmap.end()) {
+		/* Cache hit */
+		strncpy(buf, itr->second, sizeof(char) * this->pcsz);
+		auto itr_f = this->fmap.find(pos);
+		this->fque.erase(itr_f->second);
+		itr_f->second += 1;
+		this->fque.insert(itr_f->second);
+	} else {
+		/* Cache Miss */
+		if(lseek(this->fd, pos, SEEK_SET) < 0) {
+			lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Lseek: %s",
+					strerror(errno));
+			_exit(1);
+		}
+		if(read(this->fd, buf, sizeof(char) * this->pcsz) < 0) {
+			lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Read: %s",
+					strerror(errno));
+			_exit(1);
+		}
+		char *store = strndup(buf, sizeof(char) * this->pcsz);
+		if(store == NULL) {
+			lvar->write_msg(LogMsgT::LOG_ERR,
+			"OBJSTORE: Malloc: Error in allocating memory!");
+			_exit(1);
+		}
+		/* TODO: Add to cache */
+	}
+
+	return 1;
 }
