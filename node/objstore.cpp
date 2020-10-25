@@ -29,22 +29,21 @@ ObjStore :: ~ObjStore()
 
 void ObjStore :: bfield_init(bool hasfile)
 {
-	if(hasfile) {
-		int wholes = this->npcs / 64;
-		int lftovr = this->npcs % 64;
-		/*TODO:
-		*Make sure that memory allocated for this vector
-		*Doesn't go out of scope once this function ends.
-		*/
-		this->bfield = vector<uint64_t>(wholes, 1);
-		if(lftovr) {
-			uint64_t mask = 0;
-			int max = (64 - lftovr);
-			for(int i=63; i>=max; i--)
-				mask ^ ((uint64_t)1<<i);
-			this->bfield.push_back(mask);
-		}
-	} else {
+	int wholes = this->npcs / 64;
+	int lftovr = this->npcs % 64;
+	/*TODO:
+	*Make sure that memory allocated for this vector
+	*Doesn't go out of scope once this function ends.
+	*/
+	this->bfield = vector<uint64_t>(wholes, (uint64_t)hasfile);
+	if(lftovr && hasfile) {
+		uint64_t mask = 0;
+		int max = (64 - lftovr);
+		for(int i=63; i>=max; i--)
+			mask ^ ((uint64_t)1<<i);
+		this->bfield.push_back(mask);
+	} else if(lftovr) {
+		this->bfield.push_back((uint64_t)0);
 		char cmd[512];
 		sprintf(cmd, "/usr/bin/head -c %d /dev/zero > %s",
 					this->fsz, this->fname.c_str());
