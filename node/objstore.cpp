@@ -27,8 +27,11 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 
 void ObjStore :: bfield_init(bool hasfile)
 {
-	this->bfield = BitField(hasfile, this->npcs, this->fsz,
+	this->bfield = new BitField(hasfile, this->npcs, this->fsz,
 				this->fname.c_str());
 }
 
-ObjStore :: ~ObjStore() { }
+ObjStore :: ~ObjStore()
+{
+	delete this->bfield;
+}

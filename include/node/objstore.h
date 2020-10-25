@@ -15,7 +15,7 @@ namespace node {
 		int pcsz;
 		int npcs;
 		string fname;
-		BitField bfield;
+		BitField *bfield;
 	public:
 		ObjStore(int, int, string);
 		~ObjStore();
