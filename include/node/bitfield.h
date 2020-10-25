@@ -7,8 +7,7 @@
 using std::vector;
 
 namespace node {
-	class BitField {
-	public:
+	struct BitField {
 		vector<uint64_t> bfield;
 		BitField(bool, int, int, const char *);
 		~BitField();
