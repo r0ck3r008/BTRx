@@ -1,8 +1,13 @@
 #include<iostream>
 #include<vector>
 #include<stdio.h>
+#include<string.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
 #include<stdlib.h>
 #include<unistd.h>
+#include<errno.h>
 
 #include"logger/logger.h"
 #include"node/objstore.h"
@@ -25,6 +30,7 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 
 ObjStore :: ~ObjStore()
 {
+	close(this->fd);
 }
 
 void ObjStore :: bfield_init(bool hasfile)
@@ -44,6 +50,12 @@ void ObjStore :: bfield_init(bool hasfile)
 		sprintf(cmd, "/usr/bin/head -c %d /dev/zero > %s",
 					this->fsz, this->fname.c_str());
 		system(cmd);
+	}
+
+	if((this->fd = open(this->fname.c_str(), O_RDWR)) < 0) {
+		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Open: %s",
+					strerror(errno));
+		_exit(1);
 	}
 }
 
