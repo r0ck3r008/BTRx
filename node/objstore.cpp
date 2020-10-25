@@ -31,10 +31,6 @@ void ObjStore :: bfield_init(bool hasfile)
 {
 	int wholes = this->npcs / 64;
 	int lftovr = this->npcs % 64;
-	/*TODO:
-	*Make sure that memory allocated for this vector
-	*Doesn't go out of scope once this function ends.
-	*/
 	this->bfield = vector<uint64_t>(wholes, (uint64_t)hasfile);
 	if(lftovr && hasfile) {
 		uint64_t mask = 0;
