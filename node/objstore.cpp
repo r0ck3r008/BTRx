@@ -38,7 +38,7 @@ void ObjStore :: bfield_init(bool hasfile)
 		uint64_t mask = 0;
 		int max = (64 - lftovr);
 		for(int i=63; i>=max; i--)
-			mask ^ ((uint64_t)1<<i);
+			mask ^= ((uint64_t)1<<i);
 		this->bfield.push_back(mask);
 	} else if(lftovr) {
 		this->bfield.push_back((uint64_t)0);
