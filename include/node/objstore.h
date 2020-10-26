@@ -1,22 +1,19 @@
 #ifndef OBJSTORE_H
 #define OBJSTORE_H
 
-#include"defs.h"
-
 #include<vector>
-#include<unordered_map>
 
+#include"node/cache.h"
+
+using node::Cache;
 using std::vector;
 using std::string;
-using std::unordered_map;
-using std::less;
 
 namespace node {
 	class ObjStore {
-		int fsz, pcsz, npcs, fd;
-		unordered_map<int, vector<char *>::iterator&> cmap;
-		vector<char *> cvec;
+		int fsz, npcs;
 		string fname;
+		Cache *cache;
 	public:
 		vector<uint64_t> bfield;
 	private:
@@ -32,7 +29,7 @@ namespace node {
 		void bfield_flip(int);
 		/* File Related */
 		int add_piece(int, char *);
-		int get_piece(int, char *);
+		int get_piece(int, char **);
 	};
 }
 
