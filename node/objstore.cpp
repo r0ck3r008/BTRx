@@ -47,7 +47,8 @@ void ObjStore :: bfield_init(bool hasfile)
 					this->fsz, this->fname.c_str());
 		system(cmd);
 	}
-	this->cache->file_open(this->fname);
+	if(!(this->cache->file_open(this->fname)))
+		_exit(1);
 }
 
 void ObjStore :: bfield_diff(vector<uint64_t>& right, vector<uint64_t>& diff)
