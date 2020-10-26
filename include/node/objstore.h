@@ -15,7 +15,7 @@ namespace node {
 		string fname;
 		Cache *cache;
 	public:
-		vector<uint64_t> bfield;
+		vector<uint8_t> bfield;
 	private:
 		int get_pos(int);
 	public:
@@ -23,8 +23,8 @@ namespace node {
 		~ObjStore();
 		/* BitField Related */
 		void bfield_init(bool);
-		void bfield_diff(vector<uint64_t>&,
-				vector<uint64_t>&);
+		void bfield_diff(vector<uint8_t>&,
+				vector<uint8_t>&);
 		bool bfield_exists(int);
 		void bfield_flip(int);
 		/* File Related */
