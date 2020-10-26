@@ -51,8 +51,9 @@ int Cache :: file_open(string fname)
 	if((this->fd = open(fname.c_str(), O_RDWR)) < 0) {
 		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Open: %s",
 					strerror(errno));
-		_exit(1);
+		return 0;
 	}
+	return 1;
 }
 
 int Cache :: get_pos(int pcno)
