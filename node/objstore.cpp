@@ -1,6 +1,5 @@
 #include<iostream>
 #include<vector>
-#include<queue>
 #include<unordered_map>
 #include<stdio.h>
 #include<string.h>
@@ -18,10 +17,8 @@ using logger::Logger;
 using logger::LogMsgT;
 using node::ObjStore;
 using std::unordered_map;
-using std::multimap;
 using std::vector;
 using std::string;
-using std::less;
 
 extern Logger *lvar;
 
@@ -31,9 +28,8 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 	this->pcsz = pcsz;
 	this->npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
 	this->fname = fname;
-	this->cmap = unordered_map<int, char *>();
-	this->fmap = unordered_map<int, int>();
-	this->fque = multiset<int, std::less<int>>();
+	this->cmap = unordered_map<int, vector<char *>::iterator&>();
+	this->cvec = vector<char *>();
 }
 
 ObjStore :: ~ObjStore()
@@ -133,11 +129,6 @@ int ObjStore :: get_piece(int pcno, char *buf)
 	auto itr = this->cmap.find(pos);
 	if(itr != this->cmap.end()) {
 		/* Cache hit */
-		strncpy(buf, itr->second, sizeof(char) * this->pcsz);
-		auto itr_f = this->fmap.find(pos);
-		this->fque.erase(itr_f->second);
-		itr_f->second += 1;
-		this->fque.insert(itr_f->second);
 	} else {
 		/* Cache Miss */
 		if(lseek(this->fd, pos, SEEK_SET) < 0) {
