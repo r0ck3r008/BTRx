@@ -9,9 +9,11 @@
 #include<errno.h>
 
 #include"logger/logger.h"
+#include"node/objstore.h"
 #include"node/node.h"
 
 using node::Node;
+using node::ObjStore;
 using logger::LogMsgT;
 using logger::Logger;
 
