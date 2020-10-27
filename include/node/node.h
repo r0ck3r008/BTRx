@@ -8,7 +8,6 @@
 using node::ObjStore;
 using std::vector;
 
-int sock_create(char *, int);
 int sock_create(const char *, int);
 
 namespace node {

@@ -19,7 +19,7 @@ using logger::Logger;
 
 extern Logger *lvar;
 
-int sock_create(char *addr, int port)
+int sock_create(const char *addr, int port)
 {
 	int sock = 0;
 	if((sock=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -53,7 +53,7 @@ int sock_create(char *addr, int port)
 Node :: Node(int peerid, char *addr, int port, vector<char *>& peer)
 {
 	int sock = 0;
-	if((sock = sock_create(addr, port)) < 0)
+	if((sock = sock_create(addr.c_str(), port)) < 0)
 		_exit(1);
 	this->sock = vector<int>();
 	this->sock.push_back(sock);
