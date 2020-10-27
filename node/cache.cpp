@@ -34,6 +34,8 @@ Access :: ~Access()
 	delete[] this->buf;
 }
 
+Cache :: Cache() {}
+
 Cache :: Cache(int pcsz, int npcs)
 {
 	this->pcsz = pcsz;

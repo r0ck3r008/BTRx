@@ -13,12 +13,13 @@ namespace node {
 	class ObjStore {
 		int fsz, npcs;
 		string fname;
-		Cache *cache;
+		Cache cache;
 	public:
 		vector<uint8_t> bfield;
 	private:
 		int get_pos(int);
 	public:
+		ObjStore();
 		ObjStore(int, int, string);
 		~ObjStore();
 		/* BitField Related */

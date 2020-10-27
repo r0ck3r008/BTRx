@@ -24,6 +24,7 @@ namespace node {
 		int get_pos(int);
 		void update_cache(int, char *);
 	public:
+		Cache();
 		Cache(int, int);
 		~Cache();
 		int file_open(string);

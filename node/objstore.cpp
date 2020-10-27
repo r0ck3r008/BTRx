@@ -17,6 +17,8 @@ using std::string;
 
 extern Logger *lvar;
 
+ObjStore :: ObjStore(){}
+
 ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 {
 	this->fsz = fsz;
