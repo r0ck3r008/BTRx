@@ -62,6 +62,8 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 	this->peerid = peerid;
 
 	this->connback(peer);
+
+	this->ostore = ObjStore(vals[3], vals[4], sh_fname);
 }
 
 Node :: ~Node()
@@ -89,8 +91,7 @@ void Node :: connback(vector<char *>& peers)
 		bool hasfile = (bool)strtol(strtok(NULL, " "), NULL, 10);
 
 		if(this->peerid == peerid) {
-			if(hasfile)
-				/* TODO: Read in File */
+			this->ostore.bfield_init(hasfile);
 			break;
 		}
 		if(getaddrinfo(hname, port, &hints, &res) < 0) {
