@@ -23,13 +23,10 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 {
 	this->fsz = fsz;
 	this->npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
-	this->cache = new Cache(pcsz, this->npcs);
+	this->cache = Cache(pcsz, this->npcs);
 }
 
-ObjStore :: ~ObjStore()
-{
-	delete this->cache;
-}
+ObjStore :: ~ObjStore() { }
 
 void ObjStore :: bfield_init(bool hasfile)
 {
@@ -49,7 +46,7 @@ void ObjStore :: bfield_init(bool hasfile)
 					this->fsz, this->fname.c_str());
 		system(cmd);
 	}
-	if(!(this->cache->file_open(this->fname)))
+	if(!(this->cache.file_open(this->fname)))
 		_exit(1);
 }
 
@@ -88,7 +85,7 @@ int ObjStore :: add_piece(int pcno, char *piece)
 		/* Piece already exists, return err */
 		return 0;
 
-	if(!this->cache->put(pcno, piece))
+	if(!this->cache.put(pcno, piece))
 		_exit(1);
 
 	this->bfield_flip(pcno);
@@ -101,7 +98,7 @@ int ObjStore :: get_piece(int pcno, char **buf)
 		/* Piece cannot exist, return err */
 		return 0;
 
-	if(!this->cache->get(pcno, buf))
+	if(!this->cache.get(pcno, buf))
 		_exit(1);
 
 	return 1;
