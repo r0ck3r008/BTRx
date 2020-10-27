@@ -18,7 +18,8 @@ namespace node {
 	private:
 		void connback(vector<char *>&);
 	public:
-		Node(int, char *, int, vector<char *>&);
+		Node(int, string, int, string,
+			vector<char *>&, vector<int>&);
 		~Node();
 		void srvloop();
 	};
