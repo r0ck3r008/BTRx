@@ -4,18 +4,13 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"logger/logger.h"
 #include"node/cache.h"
 #include"node/objstore.h"
 
-using logger::Logger;
-using logger::LogMsgT;
 using node::ObjStore;
 using node::Cache;
 using std::vector;
 using std::string;
-
-extern Logger *lvar;
 
 ObjStore :: ObjStore(){}
 
