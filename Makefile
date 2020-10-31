@@ -7,6 +7,7 @@ ALL_OBJS := logger/*.o node/*.o
 all: btrx.bin
 
 btrx.bin: logger_objs node_objs
+	${COMPILER} ${ALL_OBJS} -o peer
 	$(MAKE) clean_objs
 
 logger_objs:
@@ -22,4 +23,4 @@ clean_objs:
 	$(MAKE) -C node/ clean
 
 clean: clean_objs
-	rm -rf bin/*.out
+	rm -rf ./peer
