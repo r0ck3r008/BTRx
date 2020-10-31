@@ -3,9 +3,9 @@
 
 #include<stdio.h>
 
-#include"logger/logmsg.pb.h"
+#include"logger/logger.h"
 
-using logger::LogMsgT;
+using logger::LogLvlT;
 
 namespace logger {
 	class LogChild {
@@ -15,7 +15,7 @@ namespace logger {
 		LogChild(int, FILE *);
 		~LogChild();
 		void srvloop();
-		int pretty_p(LogMsgT *);
+		int pretty_p(char *);
 	};
 }
 

@@ -14,7 +14,7 @@ using std::string;
 using std::cerr;
 using namespace logger;
 
-Logger :: Logger(string& fname, LogMsgT::LogLvlT lvl_max)
+Logger :: Logger(string& fname, LogLvlT lvl_max)
 {
 	FILE *f = NULL;
 	if(fname == "stdout") {
@@ -62,22 +62,18 @@ Logger :: ~Logger()
 }
 
 /* Good for log_{dbg,wrn,err} */
-void Logger :: write_msg(LogMsgT :: LogLvlT log_lvl, string msg, ...)
+void Logger :: write_msg(LogLvlT log_lvl, string msg, ...)
 {
 	if(log_lvl > (this->max_lvl))
 		return;
 
-	LogMsgT lmsg;
-	char tmp[512] = {0};
+	char tmp[512] = {0},
+		cmds[512] = {0};
 	va_list args;
 	va_start(args, msg);
 	vsprintf(tmp, msg.c_str(), args);
-	lmsg.set_logmsg(tmp);
-	lmsg.set_loglvl(log_lvl);
-
-	size_t size = lmsg.ByteSizeLong();
-	char cmds[size] = {0};
-	if(write(this->sock, cmds, size * sizeof(char)) < 0) {
+	sprintf(cmds, "%d:%s", log_lvl, tmp);
+	if(write(this->sock, cmds, 512 * sizeof(char)) < 0) {
 		cerr << "LOGGER: Write: Error writing to child: "
 			<< strerror(errno) << endl;
 		_exit(-1);

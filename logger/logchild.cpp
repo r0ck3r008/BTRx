@@ -6,7 +6,7 @@
 #include"logger/logchild.h"
 
 using logger::LogChild;
-using logger::LogMsgT;
+using logger::LogLvlT;
 
 LogChild :: LogChild(int sock, FILE *outf)
 {
@@ -24,7 +24,7 @@ LogChild :: ~LogChild()
 void LogChild :: srvloop()
 {
 	/*TODO
-	 * Demarshal the LogLvlT and pass that as a class to the pretty_p
+	 * Demarshal the LogLvlT and pass that as a char * to the pretty_p
 	 * function.
 	 **/
 	/*
@@ -48,7 +48,7 @@ void LogChild :: srvloop()
 	*/
 }
 
-int LogChild :: pretty_p(LogMsgT *lmsg)
+int LogChild :: pretty_p(char *lmsg)
 {
 	/*
 	switch(loglvl) {

@@ -16,7 +16,7 @@
 using node::Cache;
 using node::Access;
 using logger::Logger;
-using logger::LogMsgT;
+using logger::LogLvlT;
 using std::deque;
 using std::unordered_map;
 using std::pair;
@@ -51,7 +51,7 @@ Cache :: ~Cache()
 int Cache :: file_open(string fname)
 {
 	if((this->fd = open(fname.c_str(), O_RDWR)) < 0) {
-		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Open: %s",
+		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Open: %s",
 					strerror(errno));
 		return 0;
 	}
@@ -101,13 +101,13 @@ int Cache :: get(int pcno, char **buf)
 	} else {
 		/* Cache Miss */
 		if(lseek(this->fd, pos, SEEK_SET) < 0) {
-			lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Lseek: %s",
+			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 					strerror(errno));
 			return 0;
 		}
 		store = new char[sizeof(char) * this->pcsz];
 		if(read(this->fd, store, sizeof(char) * this->pcsz) < 0) {
-			lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Read: %s",
+			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Read: %s",
 					strerror(errno));
 			return 0;
 		}
@@ -121,12 +121,12 @@ int Cache :: put(int pcno, char *piece)
 {
 	int pos = this->get_pos(pcno);
 	if(lseek(this->fd, pos, SEEK_SET) < 0) {
-		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Lseek: %s",
+		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 				strerror(errno));
 		return 0;
 	}
 	if(write(this->fd, piece, sizeof(char) * this->pcsz) < 0) {
-		lvar->write_msg(LogMsgT::LOG_ERR, "OBJSTORE: Write: %s",
+		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Write: %s",
 				strerror(errno));
 		return 0;
 	}

@@ -8,7 +8,7 @@
 #include"node/node.h"
 
 using logger::Logger;
-using logger::LogMsgT;
+using logger::LogLvlT;
 using node::Node;
 using std::vector;
 using std::string;
@@ -19,7 +19,7 @@ void read_peer_info(string& fname, vector<char *>& peers)
 {
 	FILE *f = NULL;
 	if((f = fopen(fname.c_str(), "r")) == NULL) {
-		lvar->write_msg(LogMsgT::LOG_ERR, "ENTRYPOINT: Fopen: %s",
+		lvar->write_msg(LogLvlT::LOG_ERR, "ENTRYPOINT: Fopen: %s",
 					fname.c_str());
 		_exit(1);
 	}
@@ -37,7 +37,7 @@ void read_conf_file(string& fname, string& sh_fname, vector<int>& vals)
 {
 	FILE *f = NULL;
 	if((f = fopen(fname.c_str(), "r")) == NULL) {
-		lvar->write_msg(LogMsgT::LOG_ERR, "ENTRYPOINT: Fopen: %s",
+		lvar->write_msg(LogLvlT::LOG_ERR, "ENTRYPOINT: Fopen: %s",
 					fname.c_str());
 		_exit(1);
 	}
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	}
 
 	string fname = "./log_peer_" + string(argv[1]);
-	lvar = new Logger(fname, LogMsgT::LOG_DBG);
+	lvar = new Logger(fname, LogLvlT::LOG_DBG);
 
 	vector<int> vals;
 	string sh_fname;

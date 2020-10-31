@@ -14,7 +14,7 @@
 
 using node::Node;
 using node::ObjStore;
-using logger::LogMsgT;
+using logger::LogLvlT;
 using logger::Logger;
 
 extern Logger *lvar;
@@ -23,7 +23,7 @@ int sock_create(const char *addr, int port)
 {
 	int sock = 0;
 	if((sock=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Socket: %s",
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: Socket: %s",
 				strerror(errno));
 		return -1;
 	}
@@ -36,13 +36,13 @@ int sock_create(const char *addr, int port)
 
 	if(bind(sock, (struct sockaddr *)&saddr,
 			sizeof(struct sockaddr_in)) < 0) {
-		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Bind: %s",
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: Bind: %s",
 				strerror(errno));
 		close(sock);
 		return -1;
 	}
 	if(listen(sock, 5) < 0) {
-		lvar->write_msg(LogMsgT::LOG_DBG, "NODE: Listen: %s",
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: Listen: %s",
 				strerror(errno));
 		close(sock);
 		return -1;
@@ -95,13 +95,13 @@ void Node :: connback(vector<char *>& peers)
 			break;
 		}
 		if(getaddrinfo(hname, port, &hints, &res) < 0) {
-			lvar->write_msg(LogMsgT::LOG_ERR, "NODE: Getaddrinfo: %s",
+			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Getaddrinfo: %s",
 					strerror(errno));
 			_exit(1);
 		}
 		struct addrinfo *curr = res;
 		if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-			lvar->write_msg(LogMsgT::LOG_ERR, "NODE: Sock: %s",
+			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Sock: %s",
 					strerror(errno));
 			_exit(1);
 		}
