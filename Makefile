@@ -2,7 +2,7 @@ COMPILER := g++
 COMPILER_FLAGS := '-g -Wall'
 COMPILE_PATH := ${shell pwd}/include
 
-ALL_OBJS := logger/*.o node/*.
+ALL_OBJS := logger/*.o node/*.o
 
 all: btrx.bin
 
