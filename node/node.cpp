@@ -64,6 +64,8 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 	this->connback(peer);
 
 	this->ostore = ObjStore(vals[3], vals[4], sh_fname);
+
+        this->srvloop();
 }
 
 Node :: ~Node()
@@ -118,5 +120,20 @@ void Node :: connback(vector<char *>& peers)
 
 void Node :: srvloop()
 {
-
+        struct sockaddr_in *addr;
+        socklen_t len = sizeof(struct sockaddr_in);
+        while(1) {
+                addr = new struct sockaddr_in;
+                if(addr==NULL) {
+			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Allocate: %s",
+					strerror(errno));
+			_exit(1);
+                }
+                int clisock;
+                if((clisock=accept(this->sock[0], (struct sockaddr *)addr, &len)) < 0) {
+			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Accept: %s",
+					strerror(errno));
+			_exit(1);
+                }
+        }
 }
