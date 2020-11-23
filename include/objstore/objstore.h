@@ -3,13 +3,13 @@
 
 #include<vector>
 
-#include"node/cache.h"
+#include"objstore/cache.h"
 
-using node::Cache;
+using objstore::Cache;
 using std::vector;
 using std::string;
 
-namespace node {
+namespace objstore {
 	class ObjStore {
 		int fsz, npcs;
 		string fname;

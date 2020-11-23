@@ -8,7 +8,7 @@ using std::deque;
 using std::unordered_map;
 using std::string;
 
-namespace node {
+namespace objstore {
 	struct Access {
 		int pos;
 		char *buf;

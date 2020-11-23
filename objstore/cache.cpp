@@ -11,10 +11,10 @@
 
 #include"logger/logger.h"
 #include"defs.h"
-#include"node/cache.h"
+#include"objstore/cache.h"
 
-using node::Cache;
-using node::Access;
+using objstore::Cache;
+using objstore::Access;
 using logger::Logger;
 using logger::LogLvlT;
 using std::deque;

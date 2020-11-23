@@ -4,11 +4,11 @@
 #include<string.h>
 #include<unistd.h>
 
-#include"node/cache.h"
-#include"node/objstore.h"
+#include"objstore/cache.h"
+#include"objstore/objstore.h"
 
-using node::ObjStore;
-using node::Cache;
+using objstore::ObjStore;
+using objstore::Cache;
 using std::vector;
 using std::string;
 
