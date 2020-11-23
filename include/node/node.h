@@ -3,9 +3,9 @@
 
 #include<vector>
 
-#include"node/objstore.h"
+#include"objstore/objstore.h"
 
-using node::ObjStore;
+using objstore::ObjStore;
 using std::vector;
 
 int sock_create(const char *, int);
