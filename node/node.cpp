@@ -65,7 +65,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 	this->ostore = ObjStore(vals[3], vals[4], sh_fname);
 
-        this->srvloop();
+        this->acceptloop(listen_sock);
 }
 
 Node :: ~Node()

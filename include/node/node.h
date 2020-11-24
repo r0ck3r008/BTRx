@@ -17,11 +17,11 @@ namespace node {
 		int peerid;
 	private:
 		void connback(vector<char *>&);
+		void acceptloop(int);
 	public:
 		Node(int, string, int, string,
 			vector<char *>&, vector<int>&);
 		~Node();
-		void srvloop();
 	};
 }
 

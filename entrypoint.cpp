@@ -80,7 +80,6 @@ int main(int argc, char **argv)
 
 	Node n(strtol(argv[1], NULL, 10), "127.0.0.1", 6008, sh_fname,
 								peers, vals);
-	n.srvloop();
 
 	delete lvar;
 }
