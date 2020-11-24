@@ -58,7 +58,7 @@ void ObjStore :: WrLock()
 {
         int stat = 0;
         if((stat = pthread_rwlock_wrlock(&(this->rwlock))) != 0) {
-		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock RDLock: %s",
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock WrLock: %s",
 				strerror(stat));
                 _exit(1);
         }
@@ -107,6 +107,7 @@ void ObjStore :: bfield_diff(vector<uint8_t>& right, vector<uint8_t>& diff)
         this->UnLock();
 }
 
+/* Absolutely needs to be called with at least read lock set */
 bool ObjStore :: bfield_exists(int pos)
 {
 	/* TODO: Make absolutely sure this method works */
@@ -115,46 +116,57 @@ bool ObjStore :: bfield_exists(int pos)
 	uint8_t mask = 1<<lftovr;
         bool ret = false;
 
-        this->RdLock();
 	if(this->bfield[wholes] & mask)
                 ret=true;
-        this->UnLock();
 
         return ret;
 }
 
+/* Absolutely needs to be called with write lock set */
 void ObjStore :: bfield_flip(int pos)
 {
 	int wholes = pos / 8;
 	int lftovr = pos % 8;
 	uint8_t mask = 1<<lftovr;
 
-        this->WrLock();
 	this->bfield[wholes] ^= mask;
-        this->UnLock();
 }
 
 int ObjStore :: add_piece(int pcno, char *piece)
 {
-	if(this->bfield_exists(pcno))
+        int ret = 1;
+        this->WrLock();
+	if(this->bfield_exists(pcno)) {
 		/* Piece already exists, return err */
-		return 0;
+                ret = 0;
+                goto unlock;
+        }
 
-	if(!this->cache.put(pcno, piece))
-		_exit(1);
+	if(!this->cache.put(pcno, piece)) {
+                ret = 0;
+                goto unlock;
+        }
 
 	this->bfield_flip(pcno);
-	return 1;
+
+unlock:
+        this->UnLock();
+	return ret;
 }
 
-int ObjStore :: get_piece(int pcno, char **buf)
+int ObjStore :: get_piece(int pcno, char *buf)
 {
-	if(this->bfield_exists(pcno))
+        int ret = 1;
+        this->WrLock();
+	if(!this->bfield_exists(pcno)) {
 		/* Piece cannot exist, return err */
-		return 0;
-
+                ret = 0;
+                goto unlock;
+        }
 	if(!this->cache.get(pcno, buf))
-		_exit(1);
+                ret = 0;
 
-	return 1;
+unlock:
+        this->UnLock();
+	return ret;
 }
