@@ -2,6 +2,7 @@
 #define OBJSTORE_H
 
 #include<vector>
+#include<pthread.h>
 
 #include"objstore/cache.h"
 
@@ -14,10 +15,14 @@ namespace objstore {
 		int fsz, npcs;
 		string fname;
 		Cache cache;
+                pthread_rwlock_t rwlock;
 	public:
 		vector<uint8_t> bfield;
 	private:
 		int get_pos(int);
+                void RdLock();
+                void WrLock();
+                void UnLock();
 	public:
 		ObjStore();
 		ObjStore(int, int, string);

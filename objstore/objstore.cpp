@@ -27,6 +27,35 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 }
 
 ObjStore :: ~ObjStore() { }
+void ObjStore :: RdLock()
+{
+        int stat = 0;
+        if((stat = pthread_rwlock_rdlock(&(this->rwlock))) != 0) {
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock RDLock: %s",
+				strerror(stat));
+                _exit(1);
+        }
+}
+
+void ObjStore :: WrLock()
+{
+        int stat = 0;
+        if((stat = pthread_rwlock_wrlock(&(this->rwlock))) != 0) {
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock RDLock: %s",
+				strerror(stat));
+                _exit(1);
+        }
+}
+
+void ObjStore :: UnLock()
+{
+        int stat = 0;
+        if((stat = pthread_rwlock_unlock(&(this->rwlock))) != 0) {
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock Unlock: %s",
+				strerror(stat));
+                _exit(1);
+        }
+}
 
 void ObjStore :: bfield_init(bool hasfile)
 {
