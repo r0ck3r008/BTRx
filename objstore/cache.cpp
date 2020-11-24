@@ -141,6 +141,7 @@ int Cache :: put(int pcno, char *piece)
 				strerror(errno));
 		return 0;
 	}
+        this->update_cache(pos, piece);
 
 	return 1;
 }
