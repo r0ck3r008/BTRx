@@ -142,5 +142,29 @@ void Node :: srvloop()
 					strerror(errno));
 			_exit(1);
                 }
+void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
+{
+        struct sockaddr_in *addr = new struct sockaddr_in;
+        if(addr==NULL) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Error in allocating memory!");
+                _exit(1);
         }
+        addr->sin_port = _addr->sin_port;
+        addr->sin_addr.s_addr = inet_addr(inet_ntoa(_addr->sin_addr));
+        addr->sin_family = _addr->sin_family;
+
+        HandlerArgs *harg = new HandlerArgs(sock, addr, client);
+        if(harg==NULL) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Error in allocating memory!");
+                _exit(1);
+        }
+        pthread_t tid;
+        int stat=0;
+        if((stat = pthread_create(&tid, NULL, cli_handler, (void *)harg)) != 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Create: %s\n",
+                                strerror(stat));
+                _exit(1);
+        }
+
+        this->hargs.push_back(pair<pthread_t, HandlerArgs *>(tid, harg));
 }
