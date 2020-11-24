@@ -29,7 +29,7 @@ namespace objstore {
 		~Cache();
 		int file_open(string);
 		int put(int, char *);
-		int get(int, char **);
+		int get(int, char *);
 	};
 }
 

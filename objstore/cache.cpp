@@ -96,7 +96,7 @@ void Cache :: update_cache(int pos, char *buf)
         }
 }
 
-int Cache :: get(int pcno, char **buf)
+int Cache :: get(int pcno, char *buf)
 {
 	int pos = this->get_pos(pcno);
 	auto itr =  this->cmap.find(pos);
@@ -113,14 +113,18 @@ int Cache :: get(int pcno, char **buf)
 			return 0;
 		}
 		store = new char[sizeof(char) * this->pcsz];
+                if(store == NULL) {
+                        lvar->write_msg(LogLvlT::LOG_ERR, "CACHE: Malloc");
+                        _exit(1);
+                }
 		if(read(this->fd, store, sizeof(char) * this->pcsz) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Read: %s",
 					strerror(errno));
 			return 0;
 		}
-		this->update_cache(pos, store);
 	}
-	*buf = store;
+        this->update_cache(pos, store);
+        strncpy(buf, store, sizeof(char) * this->pcsz);
 	return 1;
 }
 
