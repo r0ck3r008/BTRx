@@ -98,11 +98,13 @@ void ObjStore :: bfield_init(bool hasfile)
 
 void ObjStore :: bfield_diff(vector<uint8_t>& right, vector<uint8_t>& diff)
 {
+        this->RdLock();
 	vector<uint8_t> left = this->bfield;
 	for(int i=0; i<left.size(); i++) {
 		uint8_t mask = left[i] ^ (left[i] | right[i]);
 		diff.push_back(mask);
 	}
+        this->UnLock();
 }
 
 bool ObjStore :: bfield_exists(int pos)
@@ -111,10 +113,14 @@ bool ObjStore :: bfield_exists(int pos)
 	int wholes = pos / 8;
 	int lftovr = pos % 8;
 	uint8_t mask = 1<<lftovr;
+        bool ret = false;
+
+        this->RdLock();
 	if(this->bfield[wholes] & mask)
-		return true;
-	else
-		return false;
+                ret=true;
+        this->UnLock();
+
+        return ret;
 }
 
 void ObjStore :: bfield_flip(int pos)
@@ -122,7 +128,10 @@ void ObjStore :: bfield_flip(int pos)
 	int wholes = pos / 8;
 	int lftovr = pos % 8;
 	uint8_t mask = 1<<lftovr;
+
+        this->WrLock();
 	this->bfield[wholes] ^= mask;
+        this->UnLock();
 }
 
 int ObjStore :: add_piece(int pcno, char *piece)
