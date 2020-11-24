@@ -5,12 +5,17 @@
 #include<unistd.h>
 
 #include"objstore/cache.h"
+#include"logger/logger.h"
 #include"objstore/objstore.h"
 
 using objstore::ObjStore;
 using objstore::Cache;
+using logger::LogLvlT;
+using logger::Logger;
 using std::vector;
 using std::string;
+
+extern Logger *lvar;
 
 ObjStore :: ObjStore(){}
 
