@@ -100,7 +100,7 @@ void ObjStore :: bfield_diff(vector<uint8_t>& right, vector<uint8_t>& diff)
 {
         this->RdLock();
 	vector<uint8_t> left = this->bfield;
-	for(int i=0; i<left.size(); i++) {
+	for(uint32_t i=0; i<left.size(); i++) {
 		uint8_t mask = left[i] ^ (left[i] | right[i]);
 		diff.push_back(mask);
 	}
