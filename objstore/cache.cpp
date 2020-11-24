@@ -103,15 +103,8 @@ int Cache :: get(int pcno, char **buf)
 	char *store;
 	if(itr != this->cmap.end()) {
 		/* Cache Hit */
-		Access *acc = *(itr->second);
+		Access *acc = this->cvec[itr->second];
 		store = acc->buf;
-		/* Remove from current position */
-		this->cvec.erase(itr->second);
-		this->cmap.erase(itr);
-		/* Push to front */
-		this->cvec.push_front(acc);
-		this->cmap.insert(pair<int, deque<Access *>::iterator>
-						(pos, this->cvec.begin()));
 	} else {
 		/* Cache Miss */
 		if(lseek(this->fd, pos, SEEK_SET) < 0) {
