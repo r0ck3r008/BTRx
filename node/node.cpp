@@ -92,7 +92,7 @@ void Node :: connback(vector<char *>& peers)
 	int sock;
 	char line[512];
 
-	for(int i=0; i<peers.size(); i++) {
+	for(uint32_t i=0; i<peers.size(); i++) {
 		strncpy(line, peers[i], 512 * sizeof(char));
 		int peerid = strtol(strtok(line, " "), NULL, 10);
 		char *hname = strtok(NULL, " ");
@@ -108,15 +108,16 @@ void Node :: connback(vector<char *>& peers)
 					strerror(errno));
 			_exit(1);
 		}
-		struct addrinfo *curr = res;
 		if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Sock: %s",
 					strerror(errno));
 			_exit(1);
 		}
-		for(curr; curr != NULL; curr = curr->ai_next) {
+		struct addrinfo *curr;
+		for(curr=res; curr != NULL; curr = curr->ai_next) {
 			if(connect(sock, curr->ai_addr, len) == 0) {
-				this->sock.push_back(sock);
+                                this->make_thread(sock, (struct sockaddr_in *)curr->ai_addr,
+                                                false);
 				break;
 			}
 		}
@@ -125,23 +126,21 @@ void Node :: connback(vector<char *>& peers)
 	}
 }
 
-void Node :: srvloop()
+void Node :: acceptloop(int listen_sock)
 {
-        struct sockaddr_in *addr;
         socklen_t len = sizeof(struct sockaddr_in);
         while(1) {
-                addr = new struct sockaddr_in;
-                if(addr==NULL) {
-			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Allocate: %s",
-					strerror(errno));
-			_exit(1);
-                }
+                struct sockaddr_in addr;
                 int clisock;
-                if((clisock=accept(this->sock[0], (struct sockaddr *)addr, &len)) < 0) {
+                if((clisock=accept(listen_sock, (struct sockaddr *)&addr, &len)) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Accept: %s",
 					strerror(errno));
 			_exit(1);
                 }
+                this->make_thread(clisock, &addr, true);
+        }
+}
+
 void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
 {
         struct sockaddr_in *addr = new struct sockaddr_in;

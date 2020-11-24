@@ -20,7 +20,7 @@ namespace node {
 		ObjStore ostore;
 		int peerid;
 	private:
-		void connback(vector<char *>&);
+		void connback(vector<char *> &);
 		void acceptloop(int);
                 void make_thread(int,
                                 struct sockaddr_in *,
