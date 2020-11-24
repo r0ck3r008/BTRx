@@ -41,6 +41,8 @@ Cache :: Cache(int pcsz, int npcs)
 	this->pcsz = pcsz;
 	this->npcs = npcs;
 	this->maxsz = CACHESZ/npcs;
+        this->cvec = deque<Access *>();
+        this->cmap = unordered_map<int, int>();
 }
 
 Cache :: ~Cache()

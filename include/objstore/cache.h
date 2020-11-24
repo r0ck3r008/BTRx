@@ -17,7 +17,7 @@ namespace objstore {
 	};
 
 	class Cache {
-		unordered_map<int, deque<Access *>::iterator> cmap;
+		unordered_map<int, int> cmap;
 		deque<Access *> cvec;
 		int fd, pcsz, npcs, maxsz;
 	private:
