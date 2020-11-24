@@ -53,11 +53,10 @@ int sock_create(const char *addr, int port)
 Node :: Node(int peerid, string addr, int port, string sh_fname,
 		vector<char *>& peer, vector<int>& vals)
 {
-	int sock = 0;
-	if((sock = sock_create(addr.c_str(), port)) < 0)
+	int listen_sock = 0;
+	if((listen_sock = sock_create(addr.c_str(), port)) < 0)
 		_exit(1);
-	this->sock = vector<int>();
-	this->sock.push_back(sock);
+        this->hargs = vector<pair<pthread_t, HandlerArgs *>>();
 
 	this->peerid = peerid;
 
@@ -70,8 +69,16 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 Node :: ~Node()
 {
-	for(auto i: this->sock)
-		close(i);
+        int stat = 0;
+        for(auto i: this->hargs) {
+                if((stat = pthread_join(i.first, NULL)) != 0) {
+			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Join: %s",
+					strerror(stat));
+			_exit(1);
+                }
+
+                delete i.second;
+        }
 }
 
 void Node :: connback(vector<char *>& peers)
