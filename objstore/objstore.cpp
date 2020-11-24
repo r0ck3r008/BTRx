@@ -24,9 +24,26 @@ ObjStore :: ObjStore(int fsz, int pcsz, string fname)
 	this->fsz = fsz;
 	this->npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
 	this->cache = Cache(pcsz, this->npcs);
+        this->fname = fname;
+        this->rwlock = PTHREAD_RWLOCK_INITIALIZER;
+        int stat=0;
+        if((stat = pthread_rwlock_init(&(this->rwlock), NULL)) != 0) {
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock Init: %s",
+				strerror(stat));
+                _exit(1);
+        }
 }
 
-ObjStore :: ~ObjStore() { }
+ObjStore :: ~ObjStore()
+{
+        int stat=0;
+        if((stat = pthread_rwlock_destroy(&(this->rwlock))) != 0) {
+		lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock Deinit: %s",
+				strerror(stat));
+                _exit(1);
+        }
+}
+
 void ObjStore :: RdLock()
 {
         int stat = 0;
