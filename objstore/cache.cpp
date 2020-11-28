@@ -114,7 +114,7 @@ void Cache :: update_cache(int pos, char *buf)
         } else {
                 // Not found
                 Access *new_acc = new Access(pos, buf);
-                if(this->cvec.size() == this->maxsz) {
+                if(this->cvec.size() == (uint32_t)this->maxsz) {
                         // Evict the least used
                         Access *old_acc = this->cvec.front();
                         this->cvec.pop_front();
