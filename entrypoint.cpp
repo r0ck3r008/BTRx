@@ -14,6 +14,9 @@ using std::vector;
 using std::string;
 
 Logger *lvar;
+static int n_pref_peers;
+static int uchoke_ival;
+static int opuchoke_ival;
 
 void read_peer_info(string& fname, vector<char *>& peers)
 {
@@ -78,6 +81,9 @@ int main(int argc, char **argv)
 	fname = "./peer_" + string(argv[1]) + "/" + "PeerInfo.cfg";
 	read_peer_info(fname, peers);
 
+        n_pref_peers = vals[0];
+        uchoke_ival = vals[1];
+        opuchoke_ival = vals[2];
 	Node n(strtol(argv[1], NULL, 10), "127.0.0.1", 6008, sh_fname,
 								peers, vals);
 
