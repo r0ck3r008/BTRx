@@ -3,18 +3,6 @@
 
 #include<netinet/in.h>
 
-namespace handler {
-        struct HandlerArgs {
-                int sock;
-                bool client;
-                struct sockaddr_in *addr;
-
-                HandlerArgs(int, struct sockaddr_in *,
-                                bool);
-                ~HandlerArgs();
-        };
-}
-
-void *cli_handler(void *);
+void cli_handler(int, struct sockaddr_in *, bool);
 
 #endif
