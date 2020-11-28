@@ -5,8 +5,10 @@
 #include<pthread.h>
 
 #include"objstore/cache.h"
+#include"objstore/bfield.h"
 
 using objstore::Cache;
+using objstore::Bfield;
 using std::vector;
 using std::string;
 
@@ -15,24 +17,14 @@ namespace objstore {
 		int fsz, npcs;
 		string fname;
 		Cache cache;
-                pthread_rwlock_t rwlock;
-	public:
-		vector<uint8_t> bfield;
+                Bfield *bfield;
 	private:
 		int get_pos(int);
-		bool bfield_exists(int);
-		void bfield_flip(int);
-                void RdLock();
-                void WrLock();
-                void UnLock();
 	public:
 		ObjStore();
 		ObjStore(int, int, string);
 		~ObjStore();
-		/* BitField Related */
-		void bfield_init(bool);
-		void bfield_diff(vector<uint8_t>&,
-				vector<uint8_t>&);
+                void bfield_init(bool);
 		/* File Related */
 		int add_piece(int, char *);
 		int get_piece(int, char *);
