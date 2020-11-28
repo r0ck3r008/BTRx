@@ -10,6 +10,7 @@
 
 #include"logger/logger.h"
 #include"objstore/objstore.h"
+#include"handler/handler.h"
 #include"node/node.h"
 
 using node::Node;
@@ -56,7 +57,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 	int listen_sock = 0;
 	if((listen_sock = sock_create(addr.c_str(), port)) < 0)
 		_exit(1);
-        this->hargs = vector<pair<pthread_t, HandlerArgs *>>();
+        this->threads = vector<thread>();
 
 	this->peerid = peerid;
 
@@ -69,16 +70,8 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 Node :: ~Node()
 {
-        int stat = 0;
-        for(auto i: this->hargs) {
-                if((stat = pthread_join(i.first, NULL)) != 0) {
-			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Join: %s",
-					strerror(stat));
-			_exit(1);
-                }
-
-                delete i.second;
-        }
+        for(auto &thr: this->threads)
+                thr.join();
 }
 
 void Node :: connback(vector<char *>& peers)
@@ -144,26 +137,9 @@ void Node :: acceptloop(int listen_sock)
 void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
 {
         struct sockaddr_in *addr = new struct sockaddr_in;
-        if(addr==NULL) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Error in allocating memory!");
-                _exit(1);
-        }
         addr->sin_port = _addr->sin_port;
         addr->sin_addr.s_addr = inet_addr(inet_ntoa(_addr->sin_addr));
         addr->sin_family = _addr->sin_family;
 
-        HandlerArgs *harg = new HandlerArgs(sock, addr, client);
-        if(harg==NULL) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Error in allocating memory!");
-                _exit(1);
-        }
-        pthread_t tid;
-        int stat=0;
-        if((stat = pthread_create(&tid, NULL, cli_handler, (void *)harg)) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Create: %s\n",
-                                strerror(stat));
-                _exit(1);
-        }
-
-        this->hargs.push_back(pair<pthread_t, HandlerArgs *>(tid, harg));
+        this->threads.push_back(thread(cli_handler, sock, addr, client));
 }

@@ -2,21 +2,20 @@
 #define NODE_H
 
 #include<vector>
+#include<thread>
 
 #include"objstore/objstore.h"
-#include"handler/handler.h"
 
 using objstore::ObjStore;
-using handler::HandlerArgs;
 using std::vector;
 using std::pair;
+using std::thread;
 
 int sock_create(const char *, int);
 
 namespace node {
 	class Node {
-                vector<pair<pthread_t,
-                        HandlerArgs *>> hargs;
+                vector<thread> threads;
 		ObjStore ostore;
 		int peerid;
 	private:
