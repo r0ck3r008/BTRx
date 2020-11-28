@@ -43,11 +43,44 @@ Cache :: Cache(int pcsz, int npcs)
 	this->maxsz = CACHESZ/npcs;
         this->cvec = deque<Access *>();
         this->cmap = unordered_map<int, int>();
+        this->mut = PTHREAD_MUTEX_INITIALIZER;
+        int stat = 0;
+        if((stat = pthread_mutex_init(&(this->mut), NULL)) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock Init: %s",
+                                strerror(stat));
+                _exit(1);
+        }
 }
 
 Cache :: ~Cache()
 {
+        int stat = 0;
+        if((stat = pthread_mutex_destroy(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock Init: %s",
+                                strerror(stat));
+                _exit(1);
+        }
 	close(this->fd);
+}
+
+void Cache :: Lock()
+{
+        int stat = 0;
+        if((stat = pthread_mutex_lock(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock: %s",
+                                strerror(stat));
+                _exit(1);
+        }
+}
+
+void Cache :: UnLock()
+{
+        int stat = 0;
+        if((stat = pthread_mutex_unlock(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: UnLock: %s",
+                                strerror(stat));
+                _exit(1);
+        }
 }
 
 int Cache :: file_open(string fname)
@@ -81,10 +114,6 @@ void Cache :: update_cache(int pos, char *buf)
         } else {
                 // Not found
                 Access *new_acc = new Access(pos, buf);
-                if(new_acc == NULL) {
-                        lvar->write_msg(LogLvlT::LOG_ERR, "CACHE: Malloc");
-                        _exit(1);
-                }
                 if(this->cvec.size() == this->maxsz) {
                         // Evict the least used
                         Access *old_acc = this->cvec.front();
@@ -98,7 +127,9 @@ void Cache :: update_cache(int pos, char *buf)
 
 int Cache :: get(int pcno, char *buf)
 {
-	int pos = this->get_pos(pcno);
+	int pos = this->get_pos(pcno), ret = 1;
+
+        this->Lock();
 	auto itr =  this->cmap.find(pos);
 	char *store;
 	if(itr != this->cmap.end()) {
@@ -110,38 +141,45 @@ int Cache :: get(int pcno, char *buf)
 		if(lseek(this->fd, pos, SEEK_SET) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 					strerror(errno));
-			return 0;
+                        ret = 0;
+                        goto unlock;
 		}
 		store = new char[sizeof(char) * this->pcsz];
-                if(store == NULL) {
-                        lvar->write_msg(LogLvlT::LOG_ERR, "CACHE: Malloc");
-                        _exit(1);
-                }
 		if(read(this->fd, store, sizeof(char) * this->pcsz) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Read: %s",
 					strerror(errno));
-			return 0;
+                        ret = 0;
+                        goto unlock;
 		}
 	}
         this->update_cache(pos, store);
         strncpy(buf, store, sizeof(char) * this->pcsz);
-	return 1;
+
+unlock:
+        this->UnLock();
+	return ret;
 }
 
 int Cache :: put(int pcno, char *piece)
 {
-	int pos = this->get_pos(pcno);
+	int pos = this->get_pos(pcno), ret = 1;
+
+        this->Lock();
 	if(lseek(this->fd, pos, SEEK_SET) < 0) {
 		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 				strerror(errno));
-		return 0;
+                ret = 0;
+                goto unlock;
 	}
 	if(write(this->fd, piece, sizeof(char) * this->pcsz) < 0) {
 		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Write: %s",
 				strerror(errno));
-		return 0;
+                ret = 0;
+                goto unlock;
 	}
         this->update_cache(pos, piece);
 
-	return 1;
+unlock:
+        this->UnLock();
+	return ret;
 }

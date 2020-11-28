@@ -3,6 +3,7 @@
 
 #include<deque>
 #include<unordered_map>
+#include<pthread.h>
 
 using std::deque;
 using std::unordered_map;
@@ -20,9 +21,12 @@ namespace objstore {
 		unordered_map<int, int> cmap;
 		deque<Access *> cvec;
 		int fd, pcsz, npcs, maxsz;
+                pthread_mutex_t mut;
 	private:
 		int get_pos(int);
 		void update_cache(int, char *);
+                void Lock();
+                void UnLock();
 	public:
 		Cache();
 		Cache(int, int);
