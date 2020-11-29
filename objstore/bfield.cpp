@@ -11,6 +11,18 @@ using logger::LogLvlT;
 
 extern Logger *lvar;
 
+Bfield :: Bfield()
+{
+        this->needlock = false;
+        this->bfield = vector<uint8_t>();
+}
+
+Bfield :: Bfield(vector<uint8_t> &field)
+{
+        this->bfield = vector<uint8_t>(field);
+        this->needlock = false;
+}
+
 Bfield :: Bfield(bool hasfile, bool needlock, int npcs)
 {
 	int wholes = npcs / 8;

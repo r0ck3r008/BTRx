@@ -17,6 +17,8 @@ namespace objstore {
                 void UnLock();
         public:
                 Bfield(bool, bool, int);
+                Bfield();
+                Bfield(vector<uint8_t> &);
                 ~Bfield();
                 void diff(vector<uint8_t>&,
                                 vector<uint8_t>&);
