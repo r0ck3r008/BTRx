@@ -3,11 +3,11 @@ COMPILER_FLAGS := -g
 LINKER_FLAGS := -pthread
 COMPILE_PATH := ${shell pwd}/include
 
-ALL_OBJS := entrypoint.o logger/*.o node/*.o objstore/*.o handler/*.o
+ALL_OBJS := entrypoint.o logger/*.o node/*.o objstore/*.o handler/*.o pkts/*.o
 
 all: btrx.bin
 
-btrx.bin: entrypoint.o logger_objs node_objs objstore_objs handler_objs
+btrx.bin: entrypoint.o logger_objs node_objs objstore_objs handler_objs pkts_objs
 	${COMPILER} ${LINKER_FLAGS} ${ALL_OBJS} -o peer
 	$(MAKE) clean_objs
 
@@ -29,6 +29,10 @@ objstore_objs:
 handler_objs:
 	COMPILER=${COMPILER} COMPILE_PATH=${COMPILE_PATH} \
 		   COMPILER_FLAGS=${COMPILER_FLAGS} $(MAKE) -C handler/
+
+pkts_objs:
+	COMPILER=${COMPILER} COMPILE_PATH=${COMPILE_PATH} \
+		   COMPILER_FLAGS=${COMPILER_FLAGS} $(MAKE) -C pkts/
 
 clean_objs:
 	$(MAKE) -C logger/ clean
