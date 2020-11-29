@@ -4,8 +4,6 @@
 #include<arpa/inet.h>
 
 #include"logger/logger.h"
-#include"handler/sendloop.h"
-#include"handler/recvloop.h"
 #include"handler/handler.h"
 
 using std::cout;
@@ -22,6 +20,5 @@ void cli_handler(int sock, struct sockaddr_in *addr, bool client)
                 cout << "Connection accepted from: ";
         else
                 cout << "Connected to: ";
-
         cout << inet_ntoa(addr->sin_addr) << endl;
 }
