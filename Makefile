@@ -39,6 +39,7 @@ clean_objs:
 	$(MAKE) -C node/ clean
 	$(MAKE) -C objstore/ clean
 	$(MAKE) -C handler/ clean
+	$(MAKE) -C pkts/ clean
 	rm -rf entrypoint.o
 
 clean: clean_objs
