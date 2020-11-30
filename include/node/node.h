@@ -5,8 +5,10 @@
 #include<thread>
 
 #include"objstore/objstore.h"
+#include"nbrmap/nbrmap.h"
 
 using objstore::ObjStore;
+using nbrmap::NbrMap;
 using std::vector;
 using std::pair;
 using std::thread;
@@ -17,6 +19,7 @@ namespace node {
 	class Node {
                 vector<thread> threads;
 		ObjStore ostore;
+                NbrMap *nbrmap;
 		int peerid;
 	private:
 		void connback(vector<char *> &);

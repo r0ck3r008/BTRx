@@ -61,9 +61,13 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 	this->peerid = peerid;
 
-	this->connback(peer);
-
 	this->ostore = ObjStore(vals[3], vals[4], sh_fname);
+
+        /* NbrMap is initialized on heap as it CANNOT have a default constructor
+         * since its constructor initializes 2 threads */
+        this->nbrmap = new NbrMap(peer.size());
+
+	this->connback(peer);
 
         this->acceptloop(listen_sock);
 }
@@ -72,6 +76,8 @@ Node :: ~Node()
 {
         for(auto &thr: this->threads)
                 thr.join();
+
+        delete this->nbrmap;
 }
 
 void Node :: connback(vector<char *>& peers)
