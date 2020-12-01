@@ -135,7 +135,7 @@ void NbrMap :: select_unchoked(int n_pref_peers)
                 itr->second->choked = false;
 }
 
-void opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)
+void nbrmap::opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)
 {
         std::chrono::milliseconds timespan(opuchoke_ival * 1000);
         while(1) {
@@ -144,7 +144,7 @@ void opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)
         }
 }
 
-void unchoke_handler(NbrMap *nbrmap, int uchoke_ival, int n_pref_peers)
+void nbrmap::unchoke_handler(NbrMap *nbrmap, int uchoke_ival, int n_pref_peers)
 {
         std::chrono::milliseconds timespan(uchoke_ival * 1000);
         while(1) {
