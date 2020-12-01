@@ -14,9 +14,9 @@ using std::vector;
 using std::string;
 
 Logger *lvar;
-static int n_pref_peers;
-static int uchoke_ival;
-static int opuchoke_ival;
+int n_pref_peers;
+int uchoke_ival;
+int opuchoke_ival;
 
 void read_peer_info(string& fname, vector<char *>& peers)
 {
