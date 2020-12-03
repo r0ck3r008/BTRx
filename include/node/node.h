@@ -18,7 +18,7 @@ int sock_create(const char *, int);
 namespace node {
 	class Node {
                 vector<thread> threads;
-		ObjStore ostore;
+		ObjStore *ostore;
                 NbrMap *nbrmap;
 		int peerid;
 	private:

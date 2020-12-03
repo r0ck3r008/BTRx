@@ -61,7 +61,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 	this->peerid = peerid;
 
-	this->ostore = ObjStore(vals[3], vals[4], sh_fname);
+	this->ostore = new ObjStore(vals[3], vals[4], sh_fname);
 
         /* NbrMap is initialized on heap as it CANNOT have a default constructor
          * since its constructor initializes 2 threads */
@@ -77,6 +77,7 @@ Node :: ~Node()
         for(auto &thr: this->threads)
                 thr.join();
 
+        delete this->ostore;
         delete this->nbrmap;
 }
 
@@ -99,7 +100,7 @@ void Node :: connback(vector<char *>& peers)
 		bool hasfile = (bool)strtol(strtok(NULL, " "), NULL, 10);
 
 		if(this->peerid == peerid) {
-			this->ostore.bfield_init(hasfile);
+			this->ostore->bfield_init(hasfile);
 			break;
 		}
 		if(getaddrinfo(hname, port, &hints, &res) < 0) {
