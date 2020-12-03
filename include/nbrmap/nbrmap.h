@@ -18,16 +18,15 @@ namespace nbrmap {
         };
 
         class NbrMap {
-                pthread_rwlock_t rwlock;
+                pthread_mutex_t mut;
                 atomic<uint32_t> npeers;
                 vector<int> peers;
                 unordered_map<int, Nbr *> peerinfo;
                 vector<thread> handlers;
 
         private:
-                void RdLock();
-                void WrLock();
-                void UnLock();
+                void Lock();
+                void Unlock();
 
         public:
                 NbrMap(uint32_t);

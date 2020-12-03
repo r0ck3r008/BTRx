@@ -23,11 +23,11 @@ NbrMap :: NbrMap(uint32_t npeers)
 {
         this->peers = vector<int>();
         this->peerinfo = unordered_map<int, Nbr *>();
-        this->rwlock = PTHREAD_RWLOCK_INITIALIZER;
+        this->mut = PTHREAD_MUTEX_INITIALIZER;
         this->npeers = npeers;
         int stat = 0;
-        if((stat = pthread_rwlock_init(&(this->rwlock), NULL)) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: RWLock Initialize: %s",
+        if((stat = pthread_mutex_init(&(this->mut), NULL)) != 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: Lock Initialize: %s",
                                 strerror(stat));
                 _exit(1);
         }
@@ -43,38 +43,28 @@ NbrMap :: ~NbrMap()
         for(auto &thr: this->handlers)
                 thr.join();
 
-        if((stat = pthread_rwlock_destroy(&(this->rwlock))) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: RWLock Destroy: %s",
+        if((stat = pthread_mutex_destroy(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: Lock Destroy: %s",
                                 strerror(stat));
                 _exit(1);
         }
 }
 
-void NbrMap :: RdLock()
+void NbrMap :: Lock()
 {
         int stat = 0;
-        if((stat = pthread_rwlock_rdlock(&(this->rwlock))) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: RWLock RdLock: %s",
+        if((stat = pthread_mutex_lock(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: Lock: %s",
                                 strerror(stat));
                 _exit(1);
         }
 }
 
-void NbrMap :: WrLock()
+void NbrMap :: Unlock()
 {
         int stat = 0;
-        if((stat = pthread_rwlock_wrlock(&(this->rwlock))) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: RWLock WrLock: %s",
-                                strerror(stat));
-                _exit(1);
-        }
-}
-
-void NbrMap :: UnLock()
-{
-        int stat = 0;
-        if((stat = pthread_rwlock_unlock(&(this->rwlock))) != 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: RWLock Unlock: %s",
+        if((stat = pthread_mutex_unlock(&(this->mut))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: Unlock: %s",
                                 strerror(stat));
                 _exit(1);
         }
@@ -86,10 +76,10 @@ Nbr *NbrMap :: register_cli(int peerid)
         nbr->choked = true;
         nbr->requests = 0;
 
-        this->WrLock();
+        this->Lock();
         this->peers.push_back(peerid);
         this->peerinfo.insert(pair<int, Nbr *>(peerid, nbr));
-        this->UnLock();
+        this->Unlock();
         this->npeers--;
 
         return nbr;
