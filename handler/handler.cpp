@@ -13,7 +13,8 @@ using logger::LogLvlT;
 
 extern Logger *lvar;
 
-void cli_handler(int sock, struct sockaddr_in *addr, bool client)
+void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
+                                                NbrMap *nmap, bool client)
 {
         /* TODO: Replace this with appropriate logger statements */
         if(client)
