@@ -9,6 +9,18 @@ using json = nlohmann::json;
 using std::vector;
 using std::string;
 
+enum MessageType : uint16_t {
+        Handshake = (uint16_t)1 << 1,
+        Choke = (uint16_t)1 << 2,
+        UnChoke = (uint16_t)1 << 3,
+        Interested = (uint16_t)1 << 4,
+        NotInterested = (uint16_t)1 << 5,
+        Have = (uint16_t)1 << 6,
+        BitField = (uint16_t)1 << 7,
+        Request = (uint16_t)1 << 8,
+        Piece = (uint16_t)1 << 9
+};
+
 struct PktHandshake {
         char header[18];
         char zero[10];
@@ -16,17 +28,6 @@ struct PktHandshake {
 };
 void to_json(json &, const PktHandshake &);
 void from_json(const json &, PktHandshake &);
-
-enum MessageType : uint8_t {
-        Choke = (uint8_t)1 << 0,
-        UnChoke = (uint8_t)1 << 1,
-        Interested = (uint8_t)1 << 2,
-        NotInterested = (uint8_t)1 << 3,
-        Have = (uint8_t)1 << 4,
-        BitField = (uint8_t)1 << 5,
-        Request = (uint8_t)1 << 6,
-        Piece = (uint8_t)1 << 7
-};
 
 struct PktMsgHave {
         uint32_t pcno;
@@ -53,19 +54,16 @@ struct PktMsgPiece {
 void to_json(json &, const PktMsgPiece &);
 void from_json(const json &, PktMsgPiece &);
 
-union PktPayload {
-        PktMsgHave have;
-        PktMsgBfield bfield;
-        PktMsgRequest req;
-        PktMsgPiece piece;
-};
-void to_json(json &, const PktPayload &);
-void from_json(const json &, PktPayload &);
-
 struct PktMsg {
         uint32_t len;
         MessageType type;
-        PktPayload payload;
+        union {
+                PktHandshake hshake;
+                PktMsgHave have;
+                PktMsgBfield bfield;
+                PktMsgRequest req;
+                PktMsgPiece piece;
+        };
 };
 void to_json(json &, const PktMsg &);
 void from_json(const json &, PktMsg &);

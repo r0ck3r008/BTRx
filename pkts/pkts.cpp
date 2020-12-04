@@ -62,29 +62,43 @@ void from_json(const json &j, PktMsgPiece &pkt)
         j.at("payload").get_to(pkt.payload);
 }
 
-/* PktPayload */
-void to_json(json &j, const PktPayload &pkt)
-{
-        j = json{{"have", pkt.have}, {"bfield", pkt.bfield},
-                {"req", pkt.req}, {"piece", pkt.piece}};
-}
-
-void from_json(const json &j, PktPayload &pkt)
-{
-        j.at("have").get_to(pkt.have);
-        j.at("bfield").get_to(pkt.bfield);
-        j.at("req").get_to(pkt.req);
-        j.at("piece").get_to(pkt.piece);
-}
-
 /* PktMsg */
 void to_json(json &j, const PktMsg &pkt)
 {
-        j = json{{"len", pkt.len}, {"type", pkt.type}};
+        switch(pkt.type) {
+                case Handshake:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"hshake", pkt.hshake}};
+                        break;
+                case Have:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"have", pkt.have}};
+                        break;
+                case BitField:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"bfield", pkt.bfield}};
+                        break;
+                case Request:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"req", pkt.req}};
+                        break;
+                case Piece:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"piece", pkt.piece}};
+                        break;
+                default:
+                        j = json{{"len", pkt.len}, {"type", pkt.type}};
+        }
 }
 
 void from_json(const json &j, PktMsg &pkt)
 {
         j.at("len").get_to(pkt.len);
         j.at("type").get_to(pkt.type);
+
+        if(pkt.type == Handshake)
+                j.at("hshake").get_to(pkt.hshake);
+        else if (pkt.type == Have)
+                j.at("have").get_to(pkt.have);
+        else if (pkt.type == BitField)
+                j.at("bfield").get_to(pkt.bfield);
+        else if (pkt.type == Request)
+                j.at("req").get_to(pkt.req);
+        else if (pkt.type == Piece)
+                j.at("piece").get_to(pkt.piece);
 }
