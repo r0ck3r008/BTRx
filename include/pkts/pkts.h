@@ -55,7 +55,6 @@ void to_json(json &, const PktMsgPiece &);
 void from_json(const json &, PktMsgPiece &);
 
 struct PktMsg {
-        uint32_t len;
         MessageType type;
         union {
                 PktHandshake hshake;

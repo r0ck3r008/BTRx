@@ -67,28 +67,27 @@ void to_json(json &j, const PktMsg &pkt)
 {
         switch(pkt.type) {
                 case Handshake:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"hshake", pkt.hshake}};
+                        j = json{{"type", pkt.type}, {"hshake", pkt.hshake}};
                         break;
                 case Have:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"have", pkt.have}};
+                        j = json{{"type", pkt.type}, {"have", pkt.have}};
                         break;
                 case BitField:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"bfield", pkt.bfield}};
+                        j = json{{"type", pkt.type}, {"bfield", pkt.bfield}};
                         break;
                 case Request:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"req", pkt.req}};
+                        j = json{{"type", pkt.type}, {"req", pkt.req}};
                         break;
                 case Piece:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}, {"piece", pkt.piece}};
+                        j = json{{"type", pkt.type}, {"piece", pkt.piece}};
                         break;
                 default:
-                        j = json{{"len", pkt.len}, {"type", pkt.type}};
+                        j = json{{"type", pkt.type}};
         }
 }
 
 void from_json(const json &j, PktMsg &pkt)
 {
-        j.at("len").get_to(pkt.len);
         j.at("type").get_to(pkt.type);
 
         if(pkt.type == Handshake)
