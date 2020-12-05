@@ -75,6 +75,7 @@ Nbr *NbrMap :: register_cli(int peerid)
 {
         Nbr *nbr = new Nbr;
         nbr->choked = true;
+        nbr->interested = false;
         nbr->requests = 0;
 
         this->Lock();
@@ -101,7 +102,7 @@ void NbrMap :: opt_unchoke()
                 nbr = this->peerinfo[rand()%size];
 
                 /* Atomic Operation */
-                if(nbr->choked) {
+                if(nbr->choked && nbr->interested) {
                         nbr->choked = false;
                         break;
                 }
@@ -121,9 +122,16 @@ void NbrMap :: select_unchoked(int n_pref_peers)
                 requests.insert(pair<uint32_t, Nbr *>(nbr->requests, nbr));
         }
 
-        auto itr = requests.begin();
-        for(int i=0; i<n_pref_peers; i++, itr++)
-                itr->second->choked = false;
+        int j = 0;
+        for(auto &itr: requests) {
+                if(itr.second->choked && itr.second->interested) {
+                        itr.second->choked = false;
+                        j++;
+                }
+                if(j==n_pref_peers)
+                        break;
+        }
+}
 }
 
 void nbrmap::opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)

@@ -17,6 +17,7 @@ namespace nbrmap {
 
         struct Nbr {
                 atomic<bool> choked;
+                atomic<bool> interested;
                 atomic<uint32_t> requests;
         };
 
