@@ -56,13 +56,11 @@ void from_json(const json &, PktMsgPiece &);
 
 struct PktMsg {
         MessageType type;
-        union {
-                PktHandshake hshake;
-                PktMsgHave have;
-                PktMsgBfield bfield;
-                PktMsgRequest req;
-                PktMsgPiece piece;
-        };
+        PktHandshake hshake;
+        PktMsgHave have;
+        PktMsgBfield bfield;
+        PktMsgRequest req;
+        PktMsgPiece piece;
 };
 void to_json(json &, const PktMsg &);
 void from_json(const json &, PktMsg &);
