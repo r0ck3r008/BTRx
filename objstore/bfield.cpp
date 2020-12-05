@@ -139,4 +139,9 @@ void Bfield :: flip(int pos)
 	uint8_t mask = 1<<lftovr;
 
 	this->bfield[wholes] ^= mask;
+void Bfield :: clone(vector<uint8_t> &vec)
+{
+        this->RdLock();
+        vec = vector<uint8_t>(this->bfield);
+        this->UnLock();
 }
