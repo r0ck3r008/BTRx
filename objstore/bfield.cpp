@@ -116,7 +116,6 @@ void Bfield :: diff(vector<uint8_t>& right, vector<uint8_t>& diff)
         this->UnLock();
 }
 
-/* Absolutely needs to be called with at least read lock set */
 bool Bfield :: exists(int pos)
 {
 	/* TODO: Make absolutely sure this method works */
@@ -125,20 +124,25 @@ bool Bfield :: exists(int pos)
 	uint8_t mask = 1<<lftovr;
         bool ret = false;
 
+        this->RdLock();
 	if(this->bfield[wholes] & mask)
                 ret=true;
+        this->UnLock();
 
         return ret;
 }
 
-/* Absolutely needs to be called with write lock set */
 void Bfield :: flip(int pos)
 {
 	int wholes = pos / 8;
 	int lftovr = pos % 8;
 	uint8_t mask = 1<<lftovr;
 
+        this->WrLock();
 	this->bfield[wholes] ^= mask;
+        this->UnLock();
+}
+
 void Bfield :: clone(vector<uint8_t> &vec)
 {
         this->RdLock();
