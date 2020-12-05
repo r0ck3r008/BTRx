@@ -22,8 +22,8 @@ enum MessageType : uint16_t {
 };
 
 struct PktHandshake {
-        char header[18];
-        char zero[10];
+        uint8_t header[19];
+        uint8_t zero[10];
         uint32_t peerid;
 };
 void to_json(json &, const PktHandshake &);
