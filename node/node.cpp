@@ -68,7 +68,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
         /* NbrMap is initialized on heap as it CANNOT have a default constructor
          * since its constructor initializes 2 threads */
-        this->nbrmap = new NbrMap(peer.size());
+        this->nbrmap = new NbrMap(peer.size(), npcs);
 
 	this->connback(peer);
 

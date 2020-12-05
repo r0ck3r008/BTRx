@@ -19,12 +19,13 @@ extern int uchoke_ival;
 extern int opuchoke_ival;
 extern int n_pref_peers;
 
-NbrMap :: NbrMap(uint32_t npeers)
+NbrMap :: NbrMap(uint32_t npeers, int npcs)
 {
         this->peers = vector<int>();
         this->peerinfo = unordered_map<int, Nbr *>();
         this->mut = PTHREAD_MUTEX_INITIALIZER;
         this->npeers = npeers;
+        this->bfield = Bfield(true, npcs);
         int stat = 0;
         if((stat = pthread_mutex_init(&(this->mut), NULL)) != 0) {
                 lvar->write_msg(LogLvlT::LOG_ERR, "NBRMAP: Lock Initialize: %s",

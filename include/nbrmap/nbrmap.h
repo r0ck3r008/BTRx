@@ -6,9 +6,12 @@
 #include<atomic>
 #include<thread>
 
+#include"objstore/bfield.h"
+
 using std::unordered_map;
 using std::thread;
 using std::atomic;
+using objstore::Bfield;
 
 namespace nbrmap {
 
@@ -23,13 +26,14 @@ namespace nbrmap {
                 vector<int> peers;
                 unordered_map<int, Nbr *> peerinfo;
                 vector<thread> handlers;
+                Bfield bfield;
 
         private:
                 void Lock();
                 void Unlock();
 
         public:
-                NbrMap(uint32_t);
+                NbrMap(uint32_t, int);
                 ~NbrMap();
                 Nbr *register_cli(int);
                 void opt_unchoke();
