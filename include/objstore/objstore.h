@@ -22,7 +22,7 @@ namespace objstore {
 		int get_pos(int);
 	public:
 		ObjStore();
-		ObjStore(int, int, string);
+		ObjStore(int, int, int, string);
 		~ObjStore();
                 void bfield_init(bool);
 		/* File Related */

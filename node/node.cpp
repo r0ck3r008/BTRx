@@ -61,7 +61,10 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
 	this->peerid = peerid;
 
-	this->ostore = new ObjStore(vals[3], vals[4], sh_fname);
+	int fsz = vals[3], pcsz = vals[4],
+                npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
+
+	this->ostore = new ObjStore(fsz, pcsz, npcs, sh_fname);
 
         /* NbrMap is initialized on heap as it CANNOT have a default constructor
          * since its constructor initializes 2 threads */

@@ -19,10 +19,10 @@ extern Logger *lvar;
 
 ObjStore :: ObjStore(){}
 
-ObjStore :: ObjStore(int fsz, int pcsz, string fname)
+ObjStore :: ObjStore(int fsz, int pcsz, int npcs, string fname)
 {
 	this->fsz = fsz;
-	this->npcs = (fsz % pcsz) ? ((fsz/pcsz) + 1) : (fsz/pcsz);
+	this->npcs = npcs;
 	this->cache = Cache(pcsz, this->npcs);
         this->fname = fname;
         this->bfield = NULL;
@@ -70,5 +70,5 @@ int ObjStore :: get_piece(int pcno, char *buf)
 	if(!this->cache.get(pcno, buf))
                 return 0;
 
-        return 1;;
+        return 1;
 }
