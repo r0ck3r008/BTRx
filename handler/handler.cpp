@@ -42,10 +42,12 @@ void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
                                                 NbrMap *nmap, bool client)
 {
         /* TODO: Replace this with appropriate logger statements */
-        if(client)
+        if(client) {
                 cout << "Connection accepted from: ";
-        else
+        } else {
                 cout << "Connected to: ";
+                send_handshake(sock);
+        }
 
         uint32_t sz;
         while(true) {
