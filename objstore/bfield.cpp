@@ -23,6 +23,12 @@ Bfield :: Bfield(vector<uint8_t> &field)
         this->needlock = false;
 }
 
+Bfield :: Bfield(bool needlock, int npcs)
+{
+        this->bfield = vector<uint8_t>(npcs, 0);
+        this->needlock = needlock;
+}
+
 Bfield :: Bfield(bool hasfile, bool needlock, int npcs)
 {
 	int wholes = npcs / 8;

@@ -8,15 +8,17 @@ using std::vector;
 
 namespace objstore {
         class Bfield {
-                vector<uint8_t> bfield;
                 pthread_rwlock_t rwlock;
                 bool needlock;
-        private:
+
                 void RdLock();
                 void WrLock();
                 void UnLock();
         public:
+                vector<uint8_t> bfield;
+
                 Bfield(bool, bool, int);
+                Bfield(bool, int);
                 Bfield();
                 Bfield(vector<uint8_t> &);
                 ~Bfield();
