@@ -132,6 +132,12 @@ void NbrMap :: select_unchoked(int n_pref_peers)
                         break;
         }
 }
+
+bool NbrMap :: earmark(Bfield *bfield, vector<uint8_t> &diff)
+{
+        /* Get diff from objstore->bfiled */
+        /* Flip the diff bits in NbrMap->bfield */
+        /* If nothing to flip, return false, else true */
 }
 
 void nbrmap::opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)
