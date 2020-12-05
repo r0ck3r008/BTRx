@@ -17,10 +17,11 @@ namespace objstore {
 		int fsz, npcs;
 		string fname;
 		Cache cache;
-                Bfield *bfield;
-	private:
+
 		int get_pos(int);
 	public:
+                Bfield *bfield;
+
 		ObjStore();
 		ObjStore(int, int, int, string);
 		~ObjStore();
