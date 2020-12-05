@@ -17,10 +17,8 @@ using logger::Logger;
 
 extern Logger *lvar;
 
-void send_handshake(int sock)
+void snd(int sock, json &j)
 {
-        PktMsg pkt = {.type = Handshake, .hshake = {"P2PFILESHARINGPROJ", {0}, 1234}};
-        json j = pkt;
         vector<uint8_t> bson = json::to_bson(j);
         uint8_t cmds[bson.size() + 1];
         explicit_bzero(cmds, bson.size() + 1);
@@ -33,3 +31,18 @@ void send_handshake(int sock)
         }
 }
 
+void send_handshake(int sock, int peerid)
+{
+        PktMsg pkt = {.type = Handshake, .hshake = {"P2PFILESHARINGPROJ", {0}, (uint32_t)peerid}};
+        json j = pkt;
+        snd(sock, j);
+}
+
+void send_bfield(int sock, ObjStore *ost)
+{
+        vector<uint8_t> vec;
+        ost->bfield->clone(vec);
+        PktMsg pkt = {.type = BitField, .bfield = {vec}};
+        json j = pkt;
+        snd(sock, j);
+}

@@ -6,11 +6,13 @@
 #include<unistd.h>
 
 #include"logger/logger.h"
+#include"objstore/bfield.h"
 #include"handler/handler.h"
 
 using std::cout;
 using std::endl;
-using std::copy;
+using objstore::Bfield;
+using nbrmap::Nbr;
 using logger::Logger;
 using logger::LogLvlT;
 
@@ -21,13 +23,19 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
 {
         /* TODO: Replace this with appropriate logger statements */
         if(client) {
-                cout << "Connection accepted from: ";
+                /* This is a server */
+                cout << "Connection accepted from: " << inet_ntoa(addr->sin_addr) << endl;
         } else {
-                cout << "Connected to: ";
-                send_handshake(sock);
+                /* This is a client */
+                cout << "Connected to: " << inet_ntoa(addr->sin_addr) << endl;
+                send_handshake(sock, peerid_self);
+                send_bfield(sock, ost);
         }
 
         uint32_t sz, peerid;
+        Nbr *nbr;
+        Bfield bfield;
+        vector<uint8_t> diff;
         while(true) {
                 sz = rcv_sz(sock);
                 uint8_t cmdr[sz];
@@ -37,8 +45,9 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                 PktMsg pkt = j.get<PktMsg>();
                 switch(pkt.type) {
                         case Handshake:
-                                peerid = handshake_handler(pkt);
+                                peerid = pkt.hshake.peerid;
                                 send_handshake(sock, peerid_self);
+                                nbr = nmap->register_cli(peerid);
                                 break;
                         case Choke:
                                 break;
@@ -51,6 +60,9 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                         case Have:
                                 break;
                         case BitField:
+                                bfield = Bfield(pkt.bfield.bfield);
+                                send_bfield(sock, ost);
+                                nbr->interested = nmap->earmark(&bfield, diff);
                                 break;
                         case Request:
                                 break;

@@ -38,9 +38,3 @@ void rcv(int sock, uint8_t *cmdr, uint32_t sz)
                 _exit(1);
         }
 }
-
-uint32_t handshake_handler(PktMsg &pkt)
-{
-        return pkt.hshake.peerid;
-}
-

@@ -14,10 +14,10 @@ void cli_handler(int, int, struct sockaddr_in *,
                         ObjStore *, NbrMap *, bool);
 /* Outhelper */
 void send_handshake(int, int);
+void send_bfield(int, ObjStore *);
 
 /* Inhelper */
 uint32_t rcv_sz(int);
 void rcv(int, uint8_t *, uint32_t);
-uint32_t handshake_handler(PktMsg &);
 
 #endif
