@@ -16,7 +16,7 @@ using logger::LogLvlT;
 
 extern Logger *lvar;
 
-void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
+void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *ost,
                                                 NbrMap *nmap, bool client)
 {
         /* TODO: Replace this with appropriate logger statements */
@@ -38,6 +38,7 @@ void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
                 switch(pkt.type) {
                         case Handshake:
                                 peerid = handshake_handler(pkt);
+                                send_handshake(sock, peerid_self);
                                 break;
                         case Choke:
                                 break;

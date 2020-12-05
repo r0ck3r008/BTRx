@@ -151,6 +151,6 @@ void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
         addr->sin_addr.s_addr = inet_addr(inet_ntoa(_addr->sin_addr));
         addr->sin_family = _addr->sin_family;
 
-        this->threads.push_back(thread(cli_handler, sock, addr, this->ostore, this->nbrmap,
-                                        client));
+        this->threads.push_back(thread(cli_handler, sock, this->peerid, addr,
+                                        this->ostore, this->nbrmap, client));
 }
