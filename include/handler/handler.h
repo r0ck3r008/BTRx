@@ -15,4 +15,9 @@ void cli_handler(int, struct sockaddr_in *,
 /* Outhelper */
 void send_handshake(int);
 
+/* Inhelper */
+uint32_t rcv_sz(int);
+void rcv(int, uint8_t *, uint32_t);
+uint32_t handshake_handler(PktMsg &);
+
 #endif

@@ -6,37 +6,15 @@
 #include<unistd.h>
 
 #include"logger/logger.h"
-#include"pkts/pkts.h"
 #include"handler/handler.h"
 
 using std::cout;
 using std::endl;
+using std::copy;
 using logger::Logger;
 using logger::LogLvlT;
 
 extern Logger *lvar;
-
-uint32_t rcv_sz(int sock)
-{
-        uint8_t cmdr[4] = {0};
-        if(recv(sock, cmdr, 4 , 0) < 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "HANDLER: Recv: %s",
-                                strerror(errno));
-                _exit(1);
-        }
-
-        uint32_t sz = *((uint32_t *)cmdr);
-        return sz;
-}
-
-void rcv(int sock, uint8_t *cmdr, uint32_t sz)
-{
-        if(recv(sock, cmdr, sz , 0) < 0) {
-                lvar->write_msg(LogLvlT::LOG_ERR, "HANDLER: Recv: %s",
-                                strerror(errno));
-                _exit(1);
-        }
-}
 
 void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
                                                 NbrMap *nmap, bool client)
@@ -49,7 +27,7 @@ void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
                 send_handshake(sock);
         }
 
-        uint32_t sz;
+        uint32_t sz, peerid;
         while(true) {
                 sz = rcv_sz(sock);
                 uint8_t cmdr[sz];
@@ -59,6 +37,7 @@ void cli_handler(int sock, struct sockaddr_in *addr, ObjStore *objstore,
                 PktMsg pkt = j.get<PktMsg>();
                 switch(pkt.type) {
                         case Handshake:
+                                peerid = handshake_handler(pkt);
                                 break;
                         case Choke:
                                 break;
