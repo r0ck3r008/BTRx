@@ -164,6 +164,7 @@ unlock:
 int Cache :: put(int pcno, char *piece)
 {
 	int pos = this->get_pos(pcno), ret = 1;
+        char *buf;
 
         this->Lock();
 	if(lseek(this->fd, pos, SEEK_SET) < 0) {
@@ -178,7 +179,9 @@ int Cache :: put(int pcno, char *piece)
                 ret = 0;
                 goto unlock;
 	}
-        this->update_cache(pos, piece);
+        buf = new char[sizeof(char) * this->pcsz];
+        snprintf(buf, this->pcsz * sizeof(char), "%s", piece);
+        this->update_cache(pos, buf);
 
 unlock:
         this->UnLock();
