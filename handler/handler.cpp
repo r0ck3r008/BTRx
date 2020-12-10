@@ -62,7 +62,10 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                         case BitField:
                                 bfield = Bfield(pkt.bfield.bfield);
                                 send_bfield(sock, ost);
-                                nbr->interested = nmap->earmark(&bfield, diff);
+                                if(nmap->earmark(&bfield, ost->bfield, diff))
+                                        send_interested(sock);
+                                else
+                                        send_not_interested(sock);
                                 break;
                         case Request:
                                 break;

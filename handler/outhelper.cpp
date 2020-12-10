@@ -46,3 +46,17 @@ void send_bfield(int sock, ObjStore *ost)
         json j = pkt;
         snd(sock, j);
 }
+
+void send_interested(int sock)
+{
+        PktMsg pkt = {.type = Interested};
+        json j = pkt;
+        snd(sock, j);
+}
+
+void send_not_interested(int sock)
+{
+        PktMsg pkt = {.type = NotInterested};
+        json j = pkt;
+        snd(sock, j);
+}

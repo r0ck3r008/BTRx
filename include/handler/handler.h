@@ -15,6 +15,8 @@ void cli_handler(int, int, struct sockaddr_in *,
 /* Outhelper */
 void send_handshake(int, int);
 void send_bfield(int, ObjStore *);
+void send_interested(int);
+void send_not_interested(int);
 
 /* Inhelper */
 uint32_t rcv_sz(int);
