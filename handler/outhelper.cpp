@@ -61,21 +61,22 @@ void send_not_interested(int sock)
         snd(sock, j);
 }
 
-void send_requests(int sock, vector<uint8_t> &diff)
+void send_requests(int sock, unordered_map<uint32_t, bool> &reqs)
 {
-        uint32_t pcno;
-        vector<uint32_t> reqs;
-        for(uint32_t i=0; i<diff.size(); i++) {
-                for(int j=7; j>=0; j--){
-                        uint8_t mask = (uint8_t)1 << j;
-                        if((diff[i] & mask) == mask) {
-                                pcno = i*8 + j;
-                                reqs.push_back(pcno);
-                        }
-                }
+        for(auto pcno: reqs) {
+                PktMsg pkt = {.type = Request, .req = {pcno.first}};
+                json j = pkt;
+                snd(sock, j);
         }
+}
 
-        PktMsg pkt = {.type = Request, .req = {reqs}};
+void send_piece(int sock, uint32_t pcno, ObjStore *ost)
+{
+        char buf[ost->pcsz];
+        ost->get_piece(pcno, buf);
+        string piece(buf);
+
+        PktMsg pkt = {.type = Piece, .piece = {.pcno = pcno, .payload = piece}};
         json j = pkt;
         snd(sock, j);
 }

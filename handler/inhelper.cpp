@@ -38,3 +38,16 @@ void rcv(int sock, uint8_t *cmdr, uint32_t sz)
                 _exit(1);
         }
 }
+
+void handle_piece(PktMsg *pkt, ObjStore *ost, unordered_map<uint32_t, bool> &reqs)
+{
+        uint32_t pcno = pkt->piece.pcno;
+        size_t pcsz = ost->pcsz * sizeof(char);
+        char piece[pcsz];
+        snprintf(piece, pcsz, "%s", pkt->piece.payload.c_str());
+
+        ost->add_piece(pcno, piece);
+
+        if(reqs.find(pcno) != reqs.end())
+                reqs.erase(pcno);
+}
