@@ -135,16 +135,18 @@ void NbrMap :: select_unchoked(int n_pref_peers)
 
 bool NbrMap :: earmark(Bfield *bfield_peer, Bfield *bfield_node, vector<uint8_t> &diff)
 {
-        /* Get diff from objstore->bfiled */
-        /* Flip the diff bits in NbrMap->bfield */
-        /* If nothing to flip, return false, else true */
         bfield_node->diff(bfield_peer->bfield, diff);
         bool ret = false;
         for(uint32_t i=0; i<diff.size(); i++) {
                 for(int j=7; j>=0; j--) {
                         uint8_t mask = (uint8_t)1 << j;
-                        if((diff[i] & mask) == mask && this->bfield.flip(i, j))
-                                ret = true;
+                        if((diff[i] & mask) == mask) {
+                                if((ret = this->bfield.flip(i, j)) == false)
+                                        /* If incase earmark fails, remove the bit
+                                         * from the diff so that the node does not request it
+                                         */
+                                        diff[i] ^= mask;
+                        }
                 }
         }
 
