@@ -119,6 +119,7 @@ void Cache :: update_cache(int pos, char *buf)
                         Access *old_acc = this->cvec.front();
                         this->cvec.pop_front();
                         this->cmap.erase(old_acc->pos);
+                        delete old_acc;
                 }
                 this->cmap.insert(pair<int, int>(pos, this->cvec.size()));
                 this->cvec.push_back(new_acc);
