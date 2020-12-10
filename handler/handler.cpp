@@ -54,8 +54,10 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                         case UnChoke:
                                 break;
                         case Interested:
+                                nbr->interested = true;
                                 break;
                         case NotInterested:
+                                nbr->interested = false;
                                 break;
                         case Have:
                                 break;
