@@ -117,12 +117,13 @@ void Bfield :: UnLock()
 void Bfield :: diff(vector<uint8_t>& right, vector<uint8_t>& diff)
 {
         this->RdLock();
-	vector<uint8_t> left = this->bfield;
+	vector<uint8_t> left = vector<uint8_t>(this->bfield);
+        this->UnLock();
+
 	for(uint32_t i=0; i<left.size(); i++) {
 		uint8_t mask = left[i] ^ (left[i] | right[i]);
 		diff.push_back(mask);
 	}
-        this->UnLock();
 }
 
 bool Bfield :: exists(int pos)
