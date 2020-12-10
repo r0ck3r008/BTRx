@@ -25,6 +25,7 @@ namespace objstore {
                 void diff(vector<uint8_t>&,
                                 vector<uint8_t>&);
                 bool exists(int);
+                bool flip(int, int);
                 void flip(int);
                 void clone(vector<uint8_t> &);
                 bool earmark(Bfield *);

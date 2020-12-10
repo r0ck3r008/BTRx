@@ -132,14 +132,32 @@ bool Bfield :: exists(int pos)
         return ret;
 }
 
-void Bfield :: flip(int pos)
+/* Used by NbrMap earmark, this helps avoid multiple divisions during earmark process */
+bool Bfield :: flip(int wholes, int lftover)
 {
-	int wholes = pos / 8;
-	int lftovr = pos % 8;
-	uint8_t mask = 1<<lftovr;
+	uint8_t mask = 1<<lftover;
+        bool ret = false;
 
         this->WrLock();
-	this->bfield[wholes] ^= mask;
+        if((this->bfield[wholes] & mask) == mask) {
+                this->bfield[wholes] ^= mask;
+                ret = true;
+        }
+        this->UnLock();
+
+        return ret;
+}
+
+/* Used by objstore.cpp in add_piece function */
+void Bfield :: flip(int pcno)
+{
+        int wholes = pcno / 8;
+        int lftover = pcno % 8;
+	uint8_t mask = 1<<lftover;
+
+        this->WrLock();
+        if((this->bfield[wholes] & mask) == mask)
+                this->bfield[wholes] ^= mask;
         this->UnLock();
 }
 
