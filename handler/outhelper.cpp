@@ -60,3 +60,34 @@ void send_not_interested(int sock)
         json j = pkt;
         snd(sock, j);
 }
+
+void send_requests(int sock, vector<uint8_t> &diff)
+{
+        uint32_t pcno;
+        vector<uint32_t> reqs;
+        for(uint32_t i=0; i<diff.size(); i++) {
+                for(int j=7; j>=0; j--){
+                        uint8_t mask = (uint8_t)1 << j;
+                        if((diff[i] & mask) == mask) {
+                                pcno = i*8 + j;
+                                reqs.push_back(pcno);
+                        }
+                }
+        }
+
+        PktMsg pkt = {.type = Request, .req = {reqs}};
+        json j = pkt;
+        snd(sock, j);
+}
+
+void send_choke_status(int sock, bool choke)
+{
+        PktMsg pkt;
+        if(choke)
+                pkt = {.type = Choke};
+        else
+                pkt = {.type = UnChoke};
+
+        json j = pkt;
+        snd(sock, j);
+}

@@ -17,6 +17,9 @@ void send_handshake(int, int);
 void send_bfield(int, ObjStore *);
 void send_interested(int);
 void send_not_interested(int);
+void send_requests(int, vector<uint8_t> &);
+void send_pieces(vector<uint32_t> &);
+void send_choke_status(int, bool);
 
 /* Inhelper */
 uint32_t rcv_sz(int);
