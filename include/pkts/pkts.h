@@ -42,7 +42,7 @@ void to_json(json &, const PktMsgBfield &);
 void from_json(const json &, PktMsgBfield &);
 
 struct PktMsgRequest {
-        vector<uint32_t> pcs;
+        uint32_t pcno;
 };
 void to_json(json &, const PktMsgRequest &);
 void from_json(const json &, PktMsgRequest &);

@@ -42,12 +42,12 @@ void from_json(const json &j, PktMsgBfield &pkt)
 /* PktMsgRequest */
 void to_json(json &j, const PktMsgRequest &pkt)
 {
-        j = json{{"pcs", pkt.pcs}};
+        j = json{{"pcno", pkt.pcno}};
 }
 
 void from_json(const json &j, PktMsgRequest &pkt)
 {
-        j.at("pcs").get_to(pkt.pcs);
+        j.at("pcno").get_to(pkt.pcno);
 }
 
 /* PktMsgPiece */
