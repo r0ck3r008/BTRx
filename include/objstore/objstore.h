@@ -21,6 +21,10 @@ namespace objstore {
 		int get_pos(int);
 	public:
                 Bfield *bfield;
+                /* This exists as client thread
+                 * needs this in order to form a
+                 * buffer to fetch the piece */
+                int pcsz;
 
 		ObjStore();
 		ObjStore(int, int, int, string);

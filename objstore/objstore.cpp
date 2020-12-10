@@ -23,6 +23,7 @@ ObjStore :: ObjStore(int fsz, int pcsz, int npcs, string fname)
 {
 	this->fsz = fsz;
 	this->npcs = npcs;
+        this->pcsz = pcsz;
 	this->cache = Cache(pcsz, this->npcs);
         this->fname = fname;
         this->bfield = NULL;
