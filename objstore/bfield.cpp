@@ -11,24 +11,33 @@ using logger::LogLvlT;
 
 extern Logger *lvar;
 
+/* Default constructor */
 Bfield :: Bfield()
 {
         this->needlock = false;
         this->bfield = vector<uint8_t>();
 }
 
+/* Used in handler.cpp */
 Bfield :: Bfield(vector<uint8_t> &field)
 {
         this->bfield = vector<uint8_t>(field);
         this->needlock = false;
 }
 
+/* Used in nbrmap.cpp */
 Bfield :: Bfield(bool needlock, int npcs)
 {
         this->bfield = vector<uint8_t>(npcs, 0);
         this->needlock = needlock;
 }
 
+/*
+* 1. Used in objmap.cpp after call from Node::connback in node.cpp
+* 2. Higher bit is high piece number in the bitfield
+* 8 7 6 5 4 3 2 1 (a single uint8_t bfield)
+* 1 1 1 1 0 0 0 0
+*/
 Bfield :: Bfield(bool hasfile, bool needlock, int npcs)
 {
 	int wholes = npcs / 8;
