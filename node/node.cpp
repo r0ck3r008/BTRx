@@ -151,6 +151,14 @@ void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
         addr->sin_addr.s_addr = inet_addr(inet_ntoa(_addr->sin_addr));
         addr->sin_family = _addr->sin_family;
 
+        struct timeval t;
+        t.tv_sec = 0;
+        t.tv_usec = 100000;
+        if(setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &t, sizeof(struct timeval)) < 0) {
+                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Setsockopt: %s", strerror(errno));
+                _exit(1);
+        }
+
         this->threads.push_back(thread(cli_handler, sock, this->peerid, addr,
                                         this->ostore, this->nbrmap, client));
 }
