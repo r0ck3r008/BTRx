@@ -25,7 +25,7 @@ void send_piece(int, uint32_t, ObjStore *);
 void send_choke_status(int, bool);
 
 /* Inhelper */
-uint32_t rcv_sz(int);
+bool rcv_sz(int, uint32_t *);
 void rcv(int, uint8_t *, uint32_t);
 void handle_piece(PktMsg *, ObjStore *,
                 unordered_map<uint32_t, bool> &);

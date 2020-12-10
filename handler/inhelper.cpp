@@ -17,17 +17,24 @@ using logger::Logger;
 
 extern Logger *lvar;
 
-uint32_t rcv_sz(int sock)
+bool rcv_sz(int sock, uint32_t *sz)
 {
         uint8_t cmdr[4] = {0};
-        if(recv(sock, cmdr, 4 , 0) < 0) {
+        int stat = recv(sock, cmdr, 4 , 0);
+        if(stat == EWOULDBLOCK) {
+                *sz = 0;
+                return true;
+        } else if(stat == 0) {
+                return false;
+        } else if(stat < 0) {
                 lvar->write_msg(LogLvlT::LOG_ERR, "HANDLER: Recv: %s",
                                 strerror(errno));
                 _exit(1);
         }
 
-        uint32_t sz = *((uint32_t *)cmdr);
-        return sz;
+        *sz = *((uint32_t *)cmdr);
+
+        return true;
 }
 
 void rcv(int sock, uint8_t *cmdr, uint32_t sz)

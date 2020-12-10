@@ -43,7 +43,6 @@ void diff_to_reqs(unordered_map<uint32_t, bool> &reqs, vector<uint8_t> &diff)
 }
 /* TODO:
  * 1. Replace this with appropriate logger statements
- * 2. Add a timeout in rcv_sz, which when fails, its turn for other peer to send data
  * 3. Absolutely check if bitfield makes sense.
  */
 
@@ -67,7 +66,14 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
         vector<uint8_t> diff;
         unordered_map<uint32_t, bool> reqs;
         while(true) {
-                sz = rcv_sz(sock);
+                if(!rcv_sz(sock, &sz)) {
+                        close(sock);
+                        break;
+                } else if(sz == 0) {
+                        /* timeout */
+                        send_requests(sock, reqs);
+                        continue;
+                }
                 uint8_t cmdr[sz];
                 rcv(sock, cmdr, sz);
                 vector<uint8_t> bson = vector<uint8_t>(cmdr, cmdr + sz);
