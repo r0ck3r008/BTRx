@@ -196,7 +196,12 @@ void Cache :: put(int pcno, char *piece)
         this->UnLock();
 }
 
-unlock:
+bool Cache :: exists(uint32_t pcno)
+{
+        this->RdLock();
+        auto itr = this->cmap.find(pcno);
+        bool ret = (itr != this->cmap.end());
         this->UnLock();
-	return ret;
+
+        return ret;
 }

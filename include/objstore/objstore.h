@@ -33,6 +33,7 @@ namespace objstore {
 		/* File Related */
 		int add_piece(int, char *);
 		int get_piece(int, char *);
+                bool exists(uint32_t);
 	};
 }
 

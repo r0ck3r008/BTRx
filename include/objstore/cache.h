@@ -35,6 +35,7 @@ namespace objstore {
 		int file_open(string);
 		void put(int, char *);
 		void get(int, char *);
+                bool exists(uint32_t);
 	};
 }
 

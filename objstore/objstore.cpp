@@ -73,3 +73,8 @@ int ObjStore :: get_piece(int pcno, char *buf)
 
         return 1;
 }
+
+bool ObjStore :: exists(uint32_t pcno)
+{
+        return this->cache.exists(pcno);
+}
