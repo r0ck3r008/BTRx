@@ -9,6 +9,7 @@
 #include<errno.h>
 
 #include"logger/logger.h"
+#include"defs.h"
 #include"objstore/objstore.h"
 #include"handler/handler.h"
 #include"node/node.h"
@@ -153,7 +154,7 @@ void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
 
         struct timeval t;
         t.tv_sec = 0;
-        t.tv_usec = 100000;
+        t.tv_usec = RECVTIMEOUT;
         if(setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &t, sizeof(struct timeval)) < 0) {
                 lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Setsockopt: %s", strerror(errno));
                 _exit(1);
