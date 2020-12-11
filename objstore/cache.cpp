@@ -43,10 +43,10 @@ Cache :: Cache(int pcsz, int npcs)
 	this->maxsz = CACHESZ/npcs;
         this->cvec = deque<Access *>();
         this->cmap = unordered_map<int, int>();
-        this->mut = PTHREAD_MUTEX_INITIALIZER;
+        this->rwlock = PTHREAD_RWLOCK_INITIALIZER;
         int stat = 0;
-        if((stat = pthread_mutex_init(&(this->mut), NULL)) != 0) {
-                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock Init: %s",
+        if((stat = pthread_rwlock_init(&(this->rwlock), NULL)) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: RWLOCK Init: %s",
                                 strerror(stat));
                 _exit(1);
         }
@@ -55,7 +55,7 @@ Cache :: Cache(int pcsz, int npcs)
 Cache :: ~Cache()
 {
         int stat = 0;
-        if((stat = pthread_mutex_destroy(&(this->mut))) != 0) {
+        if((stat = pthread_rwlock_destroy(&(this->rwlock))) != 0) {
                 lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock Init: %s",
                                 strerror(stat));
                 _exit(1);
@@ -63,11 +63,21 @@ Cache :: ~Cache()
 	close(this->fd);
 }
 
-void Cache :: Lock()
+void Cache :: RdLock()
 {
         int stat = 0;
-        if((stat = pthread_mutex_lock(&(this->mut))) != 0) {
-                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: Lock: %s",
+        if((stat = pthread_rwlock_rdlock(&(this->rwlock))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: RDLock: %s",
+                                strerror(stat));
+                _exit(1);
+        }
+}
+
+void Cache :: WrLock()
+{
+        int stat = 0;
+        if((stat = pthread_rwlock_wrlock(&(this->rwlock))) != 0) {
+                lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: WrLock: %s",
                                 strerror(stat));
                 _exit(1);
         }
@@ -76,7 +86,7 @@ void Cache :: Lock()
 void Cache :: UnLock()
 {
         int stat = 0;
-        if((stat = pthread_mutex_unlock(&(this->mut))) != 0) {
+        if((stat = pthread_rwlock_unlock(&(this->rwlock))) != 0) {
                 lvar->write_msg(LogLvlT::LOG_DBG, "CACHE: UnLock: %s",
                                 strerror(stat));
                 _exit(1);
@@ -126,62 +136,65 @@ void Cache :: update_cache(int pos, char *buf)
         }
 }
 
-int Cache :: get(int pcno, char *buf)
+void Cache :: get(int pcno, char *buf)
 {
-	int pos = this->get_pos(pcno), ret = 1;
-
-        this->Lock();
-	auto itr =  this->cmap.find(pos);
+	int pos = this->get_pos(pcno);
 	char *store;
-	if(itr != this->cmap.end()) {
+
+        this->RdLock();
+	auto itr =  this->cmap.find(pos);
+        bool ret = (itr != this->cmap.end());
+        this->UnLock();
+
+	if(ret) {
 		/* Cache Hit */
 		Access *acc = this->cvec[itr->second];
 		store = acc->buf;
 	} else {
 		/* Cache Miss */
+                this->WrLock(); /* Remember, fd is also shared resource! */
 		if(lseek(this->fd, pos, SEEK_SET) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 					strerror(errno));
-                        ret = 0;
-                        goto unlock;
 		}
 		store = new char[sizeof(char) * this->pcsz];
 		if(read(this->fd, store, sizeof(char) * this->pcsz) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Read: %s",
 					strerror(errno));
-                        ret = 0;
-                        goto unlock;
+                        _exit(1);
 		}
+                this->UnLock();
 	}
-        this->update_cache(pos, store);
-        strncpy(buf, store, sizeof(char) * this->pcsz);
 
-unlock:
+        this->WrLock();
+        this->update_cache(pos, store);
         this->UnLock();
-	return ret;
+
+        strncpy(buf, store, sizeof(char) * this->pcsz);
 }
 
-int Cache :: put(int pcno, char *piece)
+void Cache :: put(int pcno, char *piece)
 {
-	int pos = this->get_pos(pcno), ret = 1;
+	int pos = this->get_pos(pcno);
         char *buf;
 
-        this->Lock();
+        this->WrLock();
 	if(lseek(this->fd, pos, SEEK_SET) < 0) {
 		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Lseek: %s",
 				strerror(errno));
-                ret = 0;
-                goto unlock;
+                _exit(1);
 	}
 	if(write(this->fd, piece, sizeof(char) * this->pcsz) < 0) {
 		lvar->write_msg(LogLvlT::LOG_ERR, "OBJSTORE: Write: %s",
 				strerror(errno));
-                ret = 0;
-                goto unlock;
+                _exit(1);
 	}
         buf = new char[sizeof(char) * this->pcsz];
         snprintf(buf, this->pcsz * sizeof(char), "%s", piece);
+
         this->update_cache(pos, buf);
+        this->UnLock();
+}
 
 unlock:
         this->UnLock();

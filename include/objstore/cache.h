@@ -21,19 +21,20 @@ namespace objstore {
 		unordered_map<int, int> cmap;
 		deque<Access *> cvec;
 		int fd, pcsz, npcs, maxsz;
-                pthread_mutex_t mut;
+                pthread_rwlock_t rwlock;
 	private:
 		int get_pos(int);
 		void update_cache(int, char *);
-                void Lock();
+                void RdLock();
+                void WrLock();
                 void UnLock();
 	public:
 		Cache();
 		Cache(int, int);
 		~Cache();
 		int file_open(string);
-		int put(int, char *);
-		int get(int, char *);
+		void put(int, char *);
+		void get(int, char *);
 	};
 }
 
