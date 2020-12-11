@@ -5,16 +5,19 @@
 #include<netinet/in.h>
 
 #include"objstore/objstore.h"
+#include"json/json.hpp"
 #include"pkts/pkts.h"
 #include"nbrmap/nbrmap.h"
 
 using std::unordered_map;
+using json = nlohmann::json;
 using objstore::ObjStore;
 using nbrmap::NbrMap;
 
 void cli_handler(int, int, struct sockaddr_in *,
                         ObjStore *, NbrMap *, bool);
 /* Outhelper */
+void snd(int, json &);
 void send_handshake(int, int);
 void send_bfield(int, ObjStore *);
 void send_interested(int);
