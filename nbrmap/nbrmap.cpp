@@ -41,6 +41,9 @@ NbrMap :: NbrMap(uint32_t npeers, int npcs)
 NbrMap :: ~NbrMap()
 {
         int stat = 0;
+        /* TODO
+         * Check if it will block here during shutdown
+         */
         for(auto &thr: this->handlers)
                 thr.join();
 
