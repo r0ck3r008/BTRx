@@ -59,11 +59,10 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                 send_bfield(sock, ost);
         }
 
-        uint32_t sz, peerid;
+        uint32_t sz, peerid, ntimeouts = 0;
         bool interested, choked_node = false, choked_peer = true;
         Nbr *nbr = NULL;
-        Bfield bfield;
-        vector<uint8_t> diff;
+        vector<uint8_t> diff, bfield_peer;
         unordered_map<uint32_t, bool> reqs;
         while(true) {
                 if(!rcv_sz(sock, &sz)) {
@@ -72,6 +71,12 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                 } else if(sz == 0) {
                         /* timeout */
                         send_requests(sock, reqs);
+                        ntimeouts++;
+                        if(ntimeouts == 2) {
+                                /* Wait 2 times the timeout for HAVE check */
+                                send_haves(sock, ost, bfield_peer);
+                                ntimeouts = 0;
+                        }
                         continue;
                 }
                 uint8_t cmdr[sz];
@@ -100,11 +105,13 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                                 nbr->interested = false;
                                 break;
                         case Have:
+                                handle_have(sock, &pkt, reqs);
                                 break;
                         case BitField:
-                                bfield = Bfield(pkt.bfield.bfield);
+                                bfield_peer = vector<uint8_t>(pkt.bfield.bfield);
                                 send_bfield(sock, ost);
-                                if((interested = nmap->earmark(&bfield, ost->bfield, diff))) {
+                                if((interested = nmap->earmark(ost->bfield, bfield_peer,
+                                                                                diff))) {
                                         send_interested(sock);
                                         diff_to_reqs(reqs, diff);
                                         if(!client && !choked_node)

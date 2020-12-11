@@ -133,9 +133,10 @@ void NbrMap :: select_unchoked(int n_pref_peers)
         }
 }
 
-bool NbrMap :: earmark(Bfield *bfield_peer, Bfield *bfield_node, vector<uint8_t> &diff)
+bool NbrMap :: earmark(Bfield *bfield_node, vector<uint8_t> &bfield_peer,
+                                                        vector<uint8_t> &diff)
 {
-        bfield_node->diff(bfield_peer->bfield, diff);
+        bfield_node->diff(bfield_peer, diff);
         bool ret = false;
         for(uint32_t i=0; i<diff.size(); i++) {
                 for(int j=7; j>=0; j--) {
