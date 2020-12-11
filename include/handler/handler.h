@@ -23,11 +23,14 @@ void send_requests(int,
                 unordered_map<uint32_t, bool> &);
 void send_piece(int, uint32_t, ObjStore *);
 void send_choke_status(int, bool);
+void send_haves(int, ObjStore *, vector<uint8_t> &);
 
 /* Inhelper */
 bool rcv_sz(int, uint32_t *);
 void rcv(int, uint8_t *, uint32_t);
 void handle_piece(PktMsg *, ObjStore *,
+                unordered_map<uint32_t, bool> &);
+void handle_have(int, PktMsg *,
                 unordered_map<uint32_t, bool> &);
 
 #endif

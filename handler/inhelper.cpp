@@ -58,3 +58,14 @@ void handle_piece(PktMsg *pkt, ObjStore *ost, unordered_map<uint32_t, bool> &req
         if(reqs.find(pcno) != reqs.end())
                 reqs.erase(pcno);
 }
+
+void handle_have(int sock, PktMsg *pkt, unordered_map<uint32_t, bool> &reqs)
+{
+        auto itr = reqs.find(pkt->have.pcno);
+        if(itr != reqs.end()) {
+                send_interested(sock);
+                PktMsg pkt_out = {.type = Request, .req = {pkt->have.pcno}};
+                json j = pkt_out;
+                snd(sock, j);
+        }
+}
