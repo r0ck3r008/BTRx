@@ -54,8 +54,7 @@ int ObjStore :: add_piece(int pcno, char *piece)
 		/* Piece already exists, return err */
                 return 0;
 
-	if(!this->cache.put(pcno, piece))
-                return 0;
+	this->cache.put(pcno, piece);
 
 	this->bfield->flip(pcno);
 
@@ -68,8 +67,7 @@ int ObjStore :: get_piece(int pcno, char *buf)
 		/* Piece cannot exist, return err */
                 return 0;
 
-	if(!this->cache.get(pcno, buf))
-                return 0;
+	this->cache.get(pcno, buf);
 
         return 1;
 }
