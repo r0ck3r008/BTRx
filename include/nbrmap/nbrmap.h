@@ -39,8 +39,9 @@ namespace nbrmap {
                 Nbr *register_cli(int);
                 void opt_unchoke();
                 void select_unchoked(int);
-                bool earmark(Bfield *, Bfield *,
-                                vector<uint8_t> &);
+                bool earmark(Bfield *,
+                        vector<uint8_t> &,
+                        vector<uint8_t> &);
         };
 
         void opt_unchoke_handler(NbrMap *, int);
