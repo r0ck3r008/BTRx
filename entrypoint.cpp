@@ -45,7 +45,7 @@ int read_peer_info(string &fname, int pid, vector<int> &peer_ids, vector<string>
                 free(line);
 		line = NULL;
 		n = 0;
-                explicit_bzero(buf, csz);
+                memset(buf, 0, csz);
 	}
 
         return ret;
