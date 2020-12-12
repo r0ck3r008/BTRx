@@ -43,6 +43,24 @@ Logger :: ~Logger()
         fclose(f);
 }
 
+void Logger :: Lock()
+{
+        int stat = 0;
+        if((stat = pthread_mutex_lock(&(this->mut))) != 0) {
+                fprintf(stderr, "NBRMAP: Lock: %s", strerror(stat));
+                _exit(1);
+        }
+}
+
+void Logger :: UnLock()
+{
+        int stat = 0;
+        if((stat = pthread_mutex_unlock(&(this->mut))) != 0) {
+                fprintf(stderr, "NBRMAP: Unlock: %s", strerror(stat));
+                _exit(1);
+        }
+}
+
 /* Good for log_{dbg,wrn,err}
  * Overload this
  */

@@ -30,6 +30,9 @@ namespace logger {
                 FILE *f;
                 pthread_mutex_t mut;
 		LogLvlT max_lvl;
+
+                void Lock();
+                void UnLock();
 	public:
 		Logger(string&, LogLvlT);
 		~Logger();
