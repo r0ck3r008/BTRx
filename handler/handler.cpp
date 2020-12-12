@@ -90,26 +90,33 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                 json j = json::from_bson(bson);
                 PktMsg pkt = j.get<PktMsg>();
                 choke_status_check(sock, nbr, choked_peer);
+                peerid = pkt.hshake.peerid;
                 switch(pkt.type) {
-                        case Handshake:
-                                peerid = pkt.hshake.peerid;
+                        case Handshake:                                
+                                lvar->write_msg(LogLvlT::LOG_TCP_INIT, peerid_self, peerid);
                                 send_handshake(sock, peerid_self);
                                 nbr = nmap->register_cli(peerid);
+                                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid)
                                 break;
                         case Choke:
                                 choked_node = true;
+                                lvar->write_msg(LogLvlT::LOG_CHK, peerid_self, peerid);
                                 break;
                         case UnChoke:
                                 choked_node = false;
+                                lvar->write_msg(LogLvlT::LOG_UCHK, peerid_self, peerid);
                                 send_requests(sock, reqs);
                                 break;
                         case Interested:
                                 nbr->interested = true;
+                                lvar->write_msg(LogLvlT::LOG_INT, peerid_self, peerid);
                                 break;
                         case NotInterested:
                                 nbr->interested = false;
+                                lvar->write_msg(LogLvlT::LOG_UINT, peerid_self, peerid);
                                 break;
                         case Have:
+                                lvar->write_msg(LogLvlT::LOG_UINT, peerid_self, peerid, pkt.piece.pcno);
                                 handle_have(sock, &pkt, reqs);
                                 break;
                         case BitField:
@@ -135,6 +142,7 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                                         send_requests(sock, reqs);
                                 break;
                         case Piece:
+                                lvar->write_msg(LogLvlT::LOG_UINT, peerid_self, peerid, pkt.piece.pcno, ost->npcs);
                                 handle_piece(&pkt, ost, reqs);
                                 break;
                         default:
