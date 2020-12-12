@@ -22,8 +22,8 @@ namespace node {
                 NbrMap *nbrmap;
 		int peerid;
 	private:
-		void connback(vector<char *> &);
-		void acceptloop(int);
+		uint32_t connback(vector<char *> &);
+		void acceptloop(int, uint32_t);
                 void make_thread(int,
                                 struct sockaddr_in *,
                                 bool);
