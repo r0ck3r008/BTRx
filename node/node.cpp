@@ -94,7 +94,6 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol= IPPROTO_TCP;
-	size_t len = sizeof(struct sockaddr);
 	int sock = -1;
         uint32_t i;
 
@@ -109,20 +108,21 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 					strerror(errno));
 			_exit(1);
 		}
-		if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Sock: %s",
-					strerror(errno));
-			_exit(1);
-		}
 		struct addrinfo *curr;
 		for(curr=res; curr != NULL; curr = curr->ai_next) {
-			if(connect(sock, curr->ai_addr, len) == 0) {
+                        if((sock = socket(curr->ai_family, curr->ai_socktype, curr->ai_protocol)) < 0) {
+                                lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Sock: %s",
+                                                strerror(errno));
+                                _exit(1);
+                        }
+			if(connect(sock, curr->ai_addr, curr->ai_addrlen) == 0) {
                                 this->make_thread(sock, peer_ids[i]);
 				break;
 			}
+                        close(sock);
+                        sock = -1;
 		}
                 freeaddrinfo(res);
-                sock = -1;
 	}
 
         return i+1;
