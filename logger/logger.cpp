@@ -74,12 +74,9 @@ void Logger :: write_msg(LogLvlT log_lvl, string msg, ...)
 {
 	if(log_lvl > (this->max_lvl))
 		return;
-        char tmp[512] = {0},
-		cmds[512] = {0};
 	va_list args;
 	va_start(args, msg);
-	vsprintf(tmp, msg.c_str(), args);
-	sprintf(cmds, "%d:%s", log_lvl, tmp);
+	vfprintf(this->f, msg.c_str(), args);
 }
 
 
