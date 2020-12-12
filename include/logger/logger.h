@@ -3,6 +3,7 @@
 
 #include<iostream>
 #include<vector>
+#include<pthread.h>
 
 using std::string;
 using std::vector;
@@ -26,12 +27,13 @@ namespace logger {
 		LOG_DBG = 16384,
 	};
 	class Logger {
-		int sock;
+                FILE *f;
+                pthread_mutex_t mut;
 		LogLvlT max_lvl;
 	public:
 		Logger(string&, LogLvlT);
 		~Logger();
-		void write_msg(LogLvlT, string, ...);
+		void write_msg(LogLvlT);
 	};
 }
 

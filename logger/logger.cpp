@@ -6,7 +6,6 @@
 #include<unistd.h>
 #include<errno.h>
 
-#include"logger/logchild.h"
 #include"logger/logger.h"
 
 using std::endl;
@@ -24,59 +23,31 @@ Logger :: Logger(string& fname, LogLvlT lvl_max)
 		_exit(-1);
 	}
 
-	int sock[2] = {0};
-	if(socketpair(AF_UNIX, SOCK_STREAM, 0, sock) < 0) {
-		cerr << "LOGGER: Init: Erorr in making socket pair: " <<
-			strerror(errno) << endl;
-		_exit(-1);
-	}
-
-	pid_t child_pid = fork();
-	if(!child_pid) {
-		/* child */
-		close(sock[1]);
-		LogChild lchild(sock[0], f);
-		lchild.srvloop();
-		_exit(0);
-	} else if (child_pid < 0) {
-		/* err */
-		cerr << "LOGGER: Fork: " << strerror(errno) << endl;
-		_exit(-1);
-	} else {
-		/* parent */
-		close(sock[0]);
-		this->sock = sock[1];
-		this->max_lvl = lvl_max;
-	}
+        this->f = f;
+        this->max_lvl = lvl_max;
+        this->mut = PTHREAD_MUTEX_INITIALIZER;
+        int stat = 0;
+        if((stat = pthread_mutex_init(&(this->mut), NULL)) == 0) {
+                fprintf(stderr, "[-]LOGGER: Mutex Init: %s\n", strerror(errno));
+                _exit(1);
+        }
 }
 
 Logger :: ~Logger()
 {
-	if(write(this->sock, "EXIT", sizeof(char) * 5) < 0) {
-		cerr << "LOGGER: Write: Error writing to child: "
-			<< strerror(errno) << endl;
-		_exit(-1);
-	}
-
-	close(this->sock);
+        int stat = 0;
+        if((stat = pthread_mutex_destroy(&(this->mut))) != 0) {
+                fprintf(stderr, "[-]LOGGER: Mutex Deinit: %s\n", strerror(errno));
+                _exit(1);
+        }
+        fclose(f);
 }
 
-/* Good for log_{dbg,wrn,err} */
-void Logger :: write_msg(LogLvlT log_lvl, string msg, ...)
+/* Good for log_{dbg,wrn,err}
+ * Overload this
+ */
+void Logger :: write_msg(LogLvlT log_lvl)
 {
 	if(log_lvl > (this->max_lvl))
 		return;
-
-	char tmp[512] = {0},
-		cmds[512] = {0};
-	va_list args;
-	va_start(args, msg);
-	vsprintf(tmp, msg.c_str(), args);
-	sprintf(cmds, "%d:%s", log_lvl, tmp);
-	if(write(this->sock, cmds, 512 * sizeof(char)) < 0) {
-		cerr << "LOGGER: Write: Error writing to child: "
-			<< strerror(errno) << endl;
-		_exit(-1);
-	}
-	va_end(args);
 }
