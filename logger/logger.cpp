@@ -154,12 +154,11 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id, vector<int> peers)
         if(log_lvl > (this->max_lvl))
 		return;
         time_t now = time(0);
-   	char* date_time = ctime(&now);
 
         std::ostringstream oss;
         std::copy(peers.begin(), peers.end(), std::ostream_iterator<int>(oss, ";"));
         this->Lock();
-        fprintf(this->f, "[%s]: Peer %id has the preferred neighbors %s. \n", date_time, peer_id, oss.str());
+        fprintf(this->f, "[%s]: Peer %id has the preferred neighbors %s. \n", ctime(&now), peer_id, oss.str().c_str());
         this->UnLock();
 }
 
