@@ -84,8 +84,9 @@ int main(int argc, char **argv)
         n_pref_peers = vals[0];
         uchoke_ival = vals[1];
         opuchoke_ival = vals[2];
-	Node n(strtol(argv[1], NULL, 10), "127.0.0.1", 6008, sh_fname,
+	Node *n = new Node(strtol(argv[1], NULL, 10), "127.0.0.1", 6008, sh_fname,
 								peers, vals);
 
+        delete n;
 	delete lvar;
 }
