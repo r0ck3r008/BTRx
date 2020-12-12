@@ -88,7 +88,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2)
         time_t now = time(0);
    	char* date_time = ctime(&now);
 
-        Lock();
+        this->Lock();
 	switch(log_lvl) {
 		case LOG_TCP_INIT:
 			fprintf(this->f, "[%s]: Peer  %d makes a connection to Peer %d. \n", date_time, peer_id_1, peer_id_2);
@@ -111,7 +111,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2)
                 default: 
                         fprintf(this->f, "LOGCHILD: Unknown log level!\n");
         }
-        UnLock();
+        this->UnLock();
 }
 
 void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t pcno)
