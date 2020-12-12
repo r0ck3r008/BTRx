@@ -71,9 +71,9 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
          * since its constructor initializes 2 threads */
         this->nbrmap = new NbrMap(peer.size(), npcs);
 
-	this->connback(peer);
+	uint32_t conns = this->connback(peer);
 
-        this->acceptloop(listen_sock);
+        this->acceptloop(listen_sock, peer.size() - conns);
 }
 
 Node :: ~Node()
@@ -85,7 +85,7 @@ Node :: ~Node()
         delete this->nbrmap;
 }
 
-void Node :: connback(vector<char *>& peers)
+uint32_t Node :: connback(vector<char *>& peers)
 {
 	struct addrinfo hints, *res;
 	explicit_bzero(&hints, sizeof(struct addrinfo));
@@ -95,8 +95,9 @@ void Node :: connback(vector<char *>& peers)
 	size_t len = sizeof(struct sockaddr);
 	int sock;
 	char line[512];
+        uint32_t i;
 
-	for(uint32_t i=0; i<peers.size(); i++) {
+	for(i=0; i<peers.size(); i++) {
 		strncpy(line, peers[i], 512 * sizeof(char));
 		int peerid = strtol(strtok(line, " "), NULL, 10);
 		char *hname = strtok(NULL, " ");
@@ -128,12 +129,14 @@ void Node :: connback(vector<char *>& peers)
 		explicit_bzero(line, 512 * sizeof(char));
 		free(peers[i]);
 	}
+
+        return i+1;
 }
 
-void Node :: acceptloop(int listen_sock)
+void Node :: acceptloop(int listen_sock, uint32_t clients)
 {
         socklen_t len = sizeof(struct sockaddr_in);
-        while(1) {
+        for(uint32_t i=0; i<clients; i++) {
                 struct sockaddr_in addr;
                 int clisock;
                 if((clisock=accept(listen_sock, (struct sockaddr *)&addr, &len)) < 0) {
