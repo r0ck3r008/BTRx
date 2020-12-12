@@ -16,7 +16,7 @@ using objstore::Bfield;
 namespace nbrmap {
 
         struct Nbr {
-                atomic<bool> choked;
+                atomic<bool> choked, done;
                 atomic<bool> interested;
                 atomic<uint32_t> requests;
         };
@@ -37,8 +37,8 @@ namespace nbrmap {
                 NbrMap(uint32_t, int);
                 ~NbrMap();
                 Nbr *register_cli(int);
-                void opt_unchoke();
-                void select_unchoked(int);
+                bool opt_unchoke();
+                bool select_unchoked(int);
                 bool earmark(Bfield *,
                         vector<uint8_t> &,
                         vector<uint8_t> &);

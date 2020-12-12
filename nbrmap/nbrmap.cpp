@@ -78,6 +78,7 @@ Nbr *NbrMap :: register_cli(int peerid)
 {
         Nbr *nbr = new Nbr;
         nbr->choked = true;
+        nbr->done = false;
         nbr->interested = false;
         nbr->requests = 0;
 
@@ -90,40 +91,50 @@ Nbr *NbrMap :: register_cli(int peerid)
         return nbr;
 }
 
-void NbrMap :: opt_unchoke()
+bool NbrMap :: opt_unchoke()
 {
         /* Atomic Operation */
         if(this->npeers)
                 /* Since all the clients have not been registered yet, return */
-                return;
+                return true;
 
         int size;
         srand(time(NULL));
         Nbr *nbr;
+        bool ret = false;
         while(true) {
                 size = this->peers.size();
                 nbr = this->peerinfo[rand()%size];
 
                 /* Atomic Operation */
-                if(nbr->choked && nbr->interested) {
+                if(nbr->choked && nbr->interested && !nbr->done) {
                         nbr->choked = false;
+                        ret = true;
                         break;
                 }
         }
+
+        return ret;
 }
 
-void NbrMap :: select_unchoked(int n_pref_peers)
+bool NbrMap :: select_unchoked(int n_pref_peers)
 {
         /* Atomic Operation */
         if(this->npeers)
-                /* Since all the clients have not been registered yet, return */
-                return;
+                /* Since all the clients have not been registered yet, return, but
+                 * return true since it is yet not time for the thread to exit
+                 */
+                return true;
 
         map<uint32_t, Nbr *, greater<uint32_t>> requests;
         for(auto &peer: this->peers) {
                 Nbr *nbr = this->peerinfo[peer];
-                requests.insert(pair<uint32_t, Nbr *>(nbr->requests, nbr));
+                if(!nbr->done)
+                        requests.insert(pair<uint32_t, Nbr *>(nbr->requests, nbr));
         }
+
+        if(requests.empty())
+                return false;
 
         int j = 0;
         for(auto &itr: requests) {
@@ -134,6 +145,8 @@ void NbrMap :: select_unchoked(int n_pref_peers)
                 if(j==n_pref_peers)
                         break;
         }
+
+        return true;
 }
 
 bool NbrMap :: earmark(Bfield *bfield_node, vector<uint8_t> &bfield_peer,
@@ -162,7 +175,8 @@ void nbrmap::opt_unchoke_handler(NbrMap *nbrmap, int opuchoke_ival)
         std::chrono::milliseconds timespan(opuchoke_ival * 1000);
         while(1) {
                 std::this_thread::sleep_for(timespan);
-                nbrmap->opt_unchoke();
+                if(!nbrmap->opt_unchoke())
+                        break;
         }
 }
 
@@ -171,6 +185,7 @@ void nbrmap::unchoke_handler(NbrMap *nbrmap, int uchoke_ival, int n_pref_peers)
         std::chrono::milliseconds timespan(uchoke_ival * 1000);
         while(1) {
                 std::this_thread::sleep_for(timespan);
-                nbrmap->select_unchoked(n_pref_peers);
+                if(!nbrmap->select_unchoked(n_pref_peers))
+                        break;
         }
 }

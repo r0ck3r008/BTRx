@@ -74,10 +74,11 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                         /* timeout */
                         send_requests(sock, reqs);
                         ntimeouts++;
-                        if(ntimeouts == 2) {
+                        if(ntimeouts%2 == 0) {
                                 /* Wait 2 times the timeout for HAVE check */
                                 send_haves(sock, ost, bfield_peer);
-                                ntimeouts = 0;
+                        } else if(ntimeouts == 5) {
+                                break;
                         }
                         continue;
                 }
@@ -139,4 +140,8 @@ void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *
                                 _exit(1);
                 }
         }
+
+        /* exit here */
+        nbr->done = true;
+        close(sock);
 }
