@@ -20,7 +20,7 @@ extern Logger *lvar;
 bool rcv_sz(int sock, uint32_t *sz)
 {
         uint8_t cmdr[4] = {0};
-        int stat = recv(sock, cmdr, 4 , 0);
+        int stat = recv(sock, cmdr, 4, MSG_PEEK);
         if(stat == EWOULDBLOCK) {
                 *sz = 0;
                 return true;
