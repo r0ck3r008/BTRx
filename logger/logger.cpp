@@ -33,7 +33,7 @@ Logger :: Logger(string& fname, LogLvlT lvl_max)
         this->max_lvl = lvl_max;
         this->mut = PTHREAD_MUTEX_INITIALIZER;
         int stat = 0;
-        if((stat = pthread_mutex_init(&(this->mut), NULL)) == 0) {
+        if((stat = pthread_mutex_init(&(this->mut), NULL)) != 0) {
                 fprintf(stderr, "[-]LOGGER: Mutex Init: %s\n", strerror(errno));
                 _exit(1);
         }
@@ -158,7 +158,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id, vector<int> peers)
         std::ostringstream oss;
         std::copy(peers.begin(), peers.end(), std::ostream_iterator<int>(oss, ";"));
         this->Lock();
-        fprintf(this->f, "[%s]: Peer %id has the preferred neighbors %s. \n", ctime(&now), peer_id, oss.str().c_str());
+        fprintf(this->f, "[%s]: Peer %d has the preferred neighbors %s. \n", ctime(&now), peer_id, oss.str().c_str());
         this->UnLock();
 }
 
