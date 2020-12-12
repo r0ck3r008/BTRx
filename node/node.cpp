@@ -74,7 +74,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname, vector<int> &pe
 
 	uint32_t conns = this->connback(peer_ids, peer_hosts, peer_ports, peer_hasfile);
 
-        this->acceptloop(listen_sock, peer_ids, conns);
+        this->acceptloop(listen_sock, conns, peer_ids.size());
 }
 
 Node :: ~Node()
@@ -117,7 +117,7 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 		struct addrinfo *curr;
 		for(curr=res; curr != NULL; curr = curr->ai_next) {
 			if(connect(sock, curr->ai_addr, len) == 0) {
-                                this->make_thread(sock, peer_ids[i], false);
+                                this->make_thread(sock, peer_ids[i]);
 				break;
 			}
 		}
@@ -127,20 +127,20 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
         return i+1;
 }
 
-void Node :: acceptloop(int listen_sock, vector<int> &peer_ids, uint32_t clients)
+void Node :: acceptloop(int listen_sock, uint32_t clients, uint32_t size)
 {
-        for(uint32_t i=clients; i<peer_ids.size(); i++) {
+        for(uint32_t i=clients; i<size; i++) {
                 int clisock;
                 if((clisock=accept(listen_sock, NULL, NULL)) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Accept: %s",
 					strerror(errno));
 			_exit(1);
                 }
-                this->make_thread(clisock, peer_ids[i], true);
+                this->make_thread(clisock, 0);
         }
 }
 
-void Node :: make_thread(int sock, int peerid_peer, bool client)
+void Node :: make_thread(int sock, int peerid_peer)
 {
         struct timeval t;
         t.tv_sec = 0;
@@ -151,5 +151,5 @@ void Node :: make_thread(int sock, int peerid_peer, bool client)
         }
 
         this->threads.push_back(thread(cli_handler, sock, this->peerid, peerid_peer,
-                                        this->ostore, this->nbrmap, client));
+                                        this->ostore, this->nbrmap));
 }

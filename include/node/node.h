@@ -26,9 +26,9 @@ namespace node {
                         vector<string> &,
                         vector<string> &,
                         vector<bool> &);
-		void acceptloop(int, vector<int> &,
-                                        uint32_t);
-                void make_thread(int, int, bool);
+		void acceptloop(int, uint32_t,
+                                uint32_t);
+                void make_thread(int, int);
 	public:
 		Node(int, string, int, string,
 			vector<int> &,

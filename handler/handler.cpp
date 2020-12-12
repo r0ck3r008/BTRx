@@ -48,15 +48,17 @@ void diff_to_reqs(unordered_map<uint32_t, bool> &reqs, vector<uint8_t> &diff)
  *    if that piece becomes available.
  * 3. Absolutely check if bitfield makes sense.
  */
-void cli_handler(int sock, int peerid_self, int peerid_peer,
-                        ObjStore *ost, NbrMap *nmap, bool client)
+void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrMap *nmap)
 {
-        if(client) {
+        bool client;
+        if(peerid_peer == 0) {
                 /* This is a server */
                 cout << peerid_self << " connection accepted from " << peerid_peer << endl;
+                client = true;
         } else {
                 /* This is a client */
                 cout << peerid_self << "connected to: " << peerid_peer << endl;
+                client = false;
                 send_handshake(sock, peerid_self);
                 send_bfield(sock, ost);
         }
@@ -136,7 +138,6 @@ void cli_handler(int sock, int peerid_self, int peerid_peer,
                                 handle_piece(&pkt, ost, reqs);
                                 break;
                         default:
-                                lvar->write_msg(LogLvlT::LOG_ERR, "HANDLER: Unknown msg!");
                                 _exit(1);
                 }
         }
