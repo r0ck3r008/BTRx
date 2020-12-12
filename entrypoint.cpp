@@ -103,8 +103,8 @@ int main(int argc, char **argv)
         n_pref_peers = vals[0];
         uchoke_ival = vals[1];
         opuchoke_ival = vals[2];
-	Node *n = new Node(strtol(argv[1], NULL, 10), "127.0.0.1", 6008, sh_fname,
-								peers, vals);
+	Node *n = new Node(peerid, "127.0.0.1", port, sh_fname, peer_ids, peer_hosts,
+                                                        peer_ports, peer_hasfile, vals);
 
         delete n;
 	delete lvar;

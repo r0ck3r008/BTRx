@@ -52,8 +52,9 @@ int sock_create(const char *addr, int port)
 	return sock;
 }
 
-Node :: Node(int peerid, string addr, int port, string sh_fname,
-		vector<char *>& peer, vector<int>& vals)
+Node :: Node(int peerid, string addr, int port, string sh_fname, vector<int> &peer_ids,
+		vector<string> &peer_hosts, vector<string> &peer_ports,
+                vector<bool> &peer_hasfile, vector<int>& vals)
 {
 	int listen_sock = 0;
 	if((listen_sock = sock_create(addr.c_str(), port)) < 0)
@@ -69,11 +70,11 @@ Node :: Node(int peerid, string addr, int port, string sh_fname,
 
         /* NbrMap is initialized on heap as it CANNOT have a default constructor
          * since its constructor initializes 2 threads */
-        this->nbrmap = new NbrMap(peer.size(), npcs);
+        this->nbrmap = new NbrMap(peer_ids.size(), npcs);
 
-	uint32_t conns = this->connback(peer);
+	uint32_t conns = this->connback(peer_ids, peer_hosts, peer_ports, peer_hasfile);
 
-        this->acceptloop(listen_sock, peer.size() - conns);
+        this->acceptloop(listen_sock, peer_ids.size() - conns);
 }
 
 Node :: ~Node()
@@ -85,7 +86,8 @@ Node :: ~Node()
         delete this->nbrmap;
 }
 
-uint32_t Node :: connback(vector<char *>& peers)
+uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
+                vector<string> &peer_ports, vector<bool> &peer_hasfile)
 {
 	struct addrinfo hints, *res;
 	explicit_bzero(&hints, sizeof(struct addrinfo));
@@ -94,21 +96,15 @@ uint32_t Node :: connback(vector<char *>& peers)
 	hints.ai_protocol= IPPROTO_TCP;
 	size_t len = sizeof(struct sockaddr);
 	int sock;
-	char line[512];
         uint32_t i;
 
-	for(i=0; i<peers.size(); i++) {
-		strncpy(line, peers[i], 512 * sizeof(char));
-		int peerid = strtol(strtok(line, " "), NULL, 10);
-		char *hname = strtok(NULL, " ");
-		char *port = strtok(NULL, " ");
-		bool hasfile = (bool)strtol(strtok(NULL, " "), NULL, 10);
-
-		if(this->peerid == peerid) {
-			this->ostore->bfield_init(hasfile);
+	for(i=0; i<peer_ids.size(); i++) {
+		if(this->peerid == peer_ids[i]) {
+			this->ostore->bfield_init(peer_hasfile[i]);
 			break;
 		}
-		if(getaddrinfo(hname, port, &hints, &res) < 0) {
+		if(getaddrinfo(peer_hosts[i].c_str(), peer_ports[i].c_str(),
+                                        &hints, &res) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Getaddrinfo: %s",
 					strerror(errno));
 			_exit(1);
@@ -126,8 +122,7 @@ uint32_t Node :: connback(vector<char *>& peers)
 				break;
 			}
 		}
-		explicit_bzero(line, 512 * sizeof(char));
-		free(peers[i]);
+                freeaddrinfo(res);
 	}
 
         return i+1;

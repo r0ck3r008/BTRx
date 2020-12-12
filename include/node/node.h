@@ -22,14 +22,21 @@ namespace node {
                 NbrMap *nbrmap;
 		int peerid;
 	private:
-		uint32_t connback(vector<char *> &);
+		uint32_t connback( vector<int> &,
+                        vector<string> &,
+                        vector<string> &,
+                        vector<bool> &);
 		void acceptloop(int, uint32_t);
                 void make_thread(int,
                                 struct sockaddr_in *,
                                 bool);
 	public:
 		Node(int, string, int, string,
-			vector<char *>&, vector<int>&);
+			vector<int> &,
+                        vector<string> &,
+                        vector<string> &,
+                        vector<bool> &,
+                        vector<int>&);
 		~Node();
 	};
 }
