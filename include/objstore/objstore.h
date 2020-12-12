@@ -14,7 +14,7 @@ using std::string;
 
 namespace objstore {
 	class ObjStore {
-		int fsz, npcs;
+		int fsz;
 		string fname;
 		Cache cache;
 
@@ -25,6 +25,7 @@ namespace objstore {
                  * needs this in order to form a
                  * buffer to fetch the piece */
                 int pcsz;
+				int npcs;
 
 		ObjStore();
 		ObjStore(int, int, int, string);
