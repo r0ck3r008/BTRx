@@ -48,15 +48,15 @@ void diff_to_reqs(unordered_map<uint32_t, bool> &reqs, vector<uint8_t> &diff)
  *    if that piece becomes available.
  * 3. Absolutely check if bitfield makes sense.
  */
-void cli_handler(int sock, int peerid_self, struct sockaddr_in *addr, ObjStore *ost,
-                                                NbrMap *nmap, bool client)
+void cli_handler(int sock, int peerid_self, int peerid_peer,
+                        ObjStore *ost, NbrMap *nmap, bool client)
 {
         if(client) {
                 /* This is a server */
-                cout << "Connection accepted from: " << inet_ntoa(addr->sin_addr) << endl;
+                cout << peerid_self << " connection accepted from " << peerid_peer << endl;
         } else {
                 /* This is a client */
-                cout << "Connected to: " << inet_ntoa(addr->sin_addr) << endl;
+                cout << peerid_self << "connected to: " << peerid_peer << endl;
                 send_handshake(sock, peerid_self);
                 send_bfield(sock, ost);
         }

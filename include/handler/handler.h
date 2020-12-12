@@ -14,8 +14,8 @@ using json = nlohmann::json;
 using objstore::ObjStore;
 using nbrmap::NbrMap;
 
-void cli_handler(int, int, struct sockaddr_in *,
-                        ObjStore *, NbrMap *, bool);
+void cli_handler(int, int, int, ObjStore *, NbrMap *,
+                                bool);
 /* Outhelper */
 void snd(int, json &);
 void send_handshake(int, int);
