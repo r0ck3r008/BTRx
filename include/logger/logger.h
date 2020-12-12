@@ -10,17 +10,17 @@ using std::vector;
 
 namespace logger {
 	enum LogLvlT {
-		LOG_CXNT = 1,
-		LOG_CXNR = 2,
-		LOG_NBR = 4,
-		LOG_OUCHK = 8,
+		LOG_TCP_INIT = 1,
+		LOG_TCP_FIN = 2,
+		LOG_PREF_NGBR = 4,
+		LOG_OUCHK_NGBR = 8,
 		LOG_UCHK = 16,
 		LOG_CHK = 32,
 		LOG_HV = 64,
 		LOG_INT = 128,
 		LOG_UINT = 256,
-		LOG_DWL = 512,
-		LOG_DWLD = 1024,
+		LOG_DWLD = 512,
+		LOG_DWLD_CMPLT = 1024,
 		LOG_ERR = 2048,
 		LOG_WRN = 4096,
 		LOG_INFO = 8192,
@@ -36,7 +36,12 @@ namespace logger {
 	public:
 		Logger(string&, LogLvlT);
 		~Logger();
-		void write_msg(LogLvlT);
+		void write_msg(LogLvlT, string, ...);
+		void write_msg(LogLvlT, int ,int);
+		void write_msg(LogLvlT, int);
+		void write_msg(LogLvlT, int, int, uint32_t);
+		void write_msg(LogLvlT, int, int, uint32_t, int);
+		void write_msg(LogLvlT, int, vector<int>);
 	};
 }
 

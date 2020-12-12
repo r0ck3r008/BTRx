@@ -1,4 +1,8 @@
 #include<iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <iterator>
 #include<string.h>
 #include<stdarg.h>
 #include<sys/types.h>
@@ -11,6 +15,8 @@
 using std::endl;
 using std::string;
 using std::cerr;
+using std::begin;
+using std::end;
 using namespace logger;
 
 Logger :: Logger(string& fname, LogLvlT lvl_max)
@@ -64,8 +70,103 @@ void Logger :: UnLock()
 /* Good for log_{dbg,wrn,err}
  * Overload this
  */
-void Logger :: write_msg(LogLvlT log_lvl)
+void Logger :: write_msg(LogLvlT log_lvl, string msg, ...)
 {
 	if(log_lvl > (this->max_lvl))
 		return;
+        char tmp[512] = {0},
+		cmds[512] = {0};
+	va_list args;
+	va_start(args, msg);
+	vsprintf(tmp, msg.c_str(), args);
+	sprintf(cmds, "%d:%s", log_lvl, tmp);
 }
+
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2)
+{
+	if(log_lvl > (this->max_lvl))
+		return;
+
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+	switch(log_lvl) {
+		case LOG_TCP_INIT:
+			fprintf(this->f, "[%s]: Peer  %d makes a connection to Peer %d. ", date_time, peer_id_1, peer_id_2);
+			break;
+                case LOG_TCP_FIN:
+			fprintf(this->f, "[%s]: Peer %d is connected from Peer %d. ", date_time, peer_id_1, peer_id_2);
+			break;
+                case LOG_UCHK:
+			fprintf(this->f, "[%s]: Peer %d is unchoked by %d. ", date_time, peer_id_1, peer_id_2);
+			break;
+		case LOG_CHK:
+			fprintf(this->f, "[%s]: Peer %d is choked by %d.", date_time, peer_id_1, peer_id_2);
+			break;
+		case LOG_INT:
+			fprintf(this->f, "[%s]: Peer %d received the 'interested' message from %d. ", date_time, peer_id_1, peer_id_2);
+			break;
+		case LOG_UINT:
+			fprintf(this->f, "[%s]: Peer %d received the 'not interested' message from %d. ", date_time, peer_id_1, peer_id_2);
+			break;
+                default: 
+                        fprintf(this->f, "LOGCHILD: Unknown log level!\n");
+        }
+}
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t pcno)
+{
+	if(log_lvl > (this->max_lvl))
+		return;
+
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+        fprintf(this->f, "[%s]: Peer %d received the 'have' message from %d for the piece %zu. ", date_time, peer_id_1, peer_id_2, pcno);
+}
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t pcno, int npcs)
+{
+	if(log_lvl > (this->max_lvl))
+		return;
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. ", date_time, peer_id_1, pcno, peer_id_2, pcno);
+}
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t pcno, int npcs)
+{
+	if(log_lvl > (this->max_lvl))
+		return;
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. ", date_time, peer_id_1, pcno, peer_id_2, pcno);
+}
+
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id)
+{
+	if(log_lvl > (this->max_lvl))
+		return;
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+        fprintf(this->f, "[%s]: Peer [peer_ID] has downloaded the complete file. ", date_time, peer_id);
+}
+
+void Logger :: write_msg(LogLvlT log_lvl, int peer_id, vector<int> peers)
+{
+        if(log_lvl > (this->max_lvl))
+		return;
+        time_t now = time(0);
+   	char* date_time = ctime(&now);
+
+        std::ostringstream oss;
+        std::copy(peers.begin(), peers.end(), std::ostream_iterator<int>(oss, ";"));
+
+        fprintf(this->f, "[%s]: Peer [peer_ID] has the preferred neighbors %d.", date_time, oss.str());
+}
+
