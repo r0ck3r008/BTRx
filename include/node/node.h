@@ -26,10 +26,9 @@ namespace node {
                         vector<string> &,
                         vector<string> &,
                         vector<bool> &);
-		void acceptloop(int, uint32_t);
-                void make_thread(int,
-                                struct sockaddr_in *,
-                                bool);
+		void acceptloop(int, vector<int> &,
+                                        uint32_t);
+                void make_thread(int, int, bool);
 	public:
 		Node(int, string, int, string,
 			vector<int> &,

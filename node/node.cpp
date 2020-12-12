@@ -74,7 +74,7 @@ Node :: Node(int peerid, string addr, int port, string sh_fname, vector<int> &pe
 
 	uint32_t conns = this->connback(peer_ids, peer_hosts, peer_ports, peer_hasfile);
 
-        this->acceptloop(listen_sock, peer_ids.size() - conns);
+        this->acceptloop(listen_sock, peer_ids, conns);
 }
 
 Node :: ~Node()
@@ -117,8 +117,7 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 		struct addrinfo *curr;
 		for(curr=res; curr != NULL; curr = curr->ai_next) {
 			if(connect(sock, curr->ai_addr, len) == 0) {
-                                this->make_thread(sock, (struct sockaddr_in *)curr->ai_addr,
-                                                false);
+                                this->make_thread(sock, peer_ids[i], false);
 				break;
 			}
 		}
@@ -128,28 +127,21 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
         return i+1;
 }
 
-void Node :: acceptloop(int listen_sock, uint32_t clients)
+void Node :: acceptloop(int listen_sock, vector<int> &peer_ids, uint32_t clients)
 {
-        socklen_t len = sizeof(struct sockaddr_in);
-        for(uint32_t i=0; i<clients; i++) {
-                struct sockaddr_in addr;
+        for(uint32_t i=clients; i<peer_ids.size(); i++) {
                 int clisock;
-                if((clisock=accept(listen_sock, (struct sockaddr *)&addr, &len)) < 0) {
+                if((clisock=accept(listen_sock, NULL, NULL)) < 0) {
 			lvar->write_msg(LogLvlT::LOG_ERR, "NODE: Accept: %s",
 					strerror(errno));
 			_exit(1);
                 }
-                this->make_thread(clisock, &addr, true);
+                this->make_thread(clisock, peer_ids[i], true);
         }
 }
 
-void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
+void Node :: make_thread(int sock, int peerid_peer, bool client)
 {
-        struct sockaddr_in *addr = new struct sockaddr_in;
-        addr->sin_port = _addr->sin_port;
-        addr->sin_addr.s_addr = inet_addr(inet_ntoa(_addr->sin_addr));
-        addr->sin_family = _addr->sin_family;
-
         struct timeval t;
         t.tv_sec = 0;
         t.tv_usec = RECVTIMEOUT;
@@ -158,6 +150,6 @@ void Node :: make_thread(int sock, struct sockaddr_in *_addr, bool client)
                 _exit(1);
         }
 
-        this->threads.push_back(thread(cli_handler, sock, this->peerid, addr,
+        this->threads.push_back(thread(cli_handler, sock, this->peerid, peerid_peer,
                                         this->ostore, this->nbrmap, client));
 }
