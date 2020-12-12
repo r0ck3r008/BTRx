@@ -18,7 +18,8 @@ int n_pref_peers;
 int uchoke_ival;
 int opuchoke_ival;
 
-void read_peer_info(string& fname, vector<char *>& peers)
+int read_peer_info(string &fname, int pid, vector<int> &peer_ids, vector<string>& peer_hosts,
+                                vector<string> &peer_ports, vector<bool> &peer_hasfile)
 {
 	FILE *f = NULL;
 	if((f = fopen(fname.c_str(), "r")) == NULL) {
@@ -27,13 +28,27 @@ void read_peer_info(string& fname, vector<char *>& peers)
 		_exit(1);
 	}
 
-	char *line = NULL;
-	size_t n = 0;
+	char *line = NULL, buf[512] = {0};
+	size_t n = 0, csz = sizeof(char) * 512;
+        int ret = 0;
 	while(getline(&line, &n, f) > 0) {
-		peers.push_back(line);
+                strncpy(buf, line, csz);
+		int peerid = strtol(strtok(line, " "), NULL, 10);
+                peer_ids.push_back(peerid);
+		peer_hosts.push_back(string(strtok(NULL, " ")));
+		char *port = strtok(NULL, " ");
+                if(peerid == pid)
+                        ret = strtol(port, NULL, 10);
+                peer_ports.push_back(string(port));
+		peer_hasfile.push_back((bool)strtol(strtok(NULL, " "), NULL, 10));
+
+                free(line);
 		line = NULL;
 		n = 0;
+                explicit_bzero(buf, csz);
 	}
+
+        return ret;
 }
 
 void read_conf_file(string& fname, string& sh_fname, vector<int>& vals)
@@ -72,14 +87,18 @@ int main(int argc, char **argv)
 	string fname = "./log_peer_" + string(argv[1]);
 	lvar = new Logger(fname, LogLvlT::LOG_DBG);
 
+        int peerid = strtol(argv[1], NULL, 10);
+
 	vector<int> vals;
 	string sh_fname;
 	fname = "./Common.cfg";
 	read_conf_file(fname, sh_fname, vals);
 
-	vector<char *> peers;
+        vector<int> peer_ids;
+	vector<string> peer_hosts, peer_ports;
+        vector<bool> peer_hasfile;
 	fname = "./peer_" + string(argv[1]) + "/" + "PeerInfo.cfg";
-	read_peer_info(fname, peers);
+	int port = read_peer_info(fname, peerid, peer_ids, peer_hosts, peer_ports, peer_hasfile);
 
         n_pref_peers = vals[0];
         uchoke_ival = vals[1];
