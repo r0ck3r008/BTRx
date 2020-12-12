@@ -31,7 +31,7 @@ int sock_create(const char *addr, int port)
 	}
 
 	struct sockaddr_in saddr;
-	explicit_bzero(&saddr, sizeof(struct sockaddr_in));
+	memset(&saddr, 0, sizeof(struct sockaddr_in));
 	saddr.sin_port = htons(port);
 	saddr.sin_addr.s_addr = inet_addr(addr);
 	saddr.sin_family = AF_INET;
@@ -90,7 +90,7 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
                 vector<string> &peer_ports, vector<bool> &peer_hasfile)
 {
 	struct addrinfo hints, *res;
-	explicit_bzero(&hints, sizeof(struct addrinfo));
+	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol= IPPROTO_TCP;

@@ -20,7 +20,7 @@ void snd(int sock, json &j)
 {
         vector<uint8_t> bson = json::to_bson(j);
         uint8_t cmds[bson.size() + 1];
-        explicit_bzero(cmds, bson.size() + 1);
+        memset(cmds, 0, bson.size() + 1);
         copy(bson.begin(), bson.end(), cmds);
 
         if(send(sock, cmds, bson.size() + 1, 0) < 0) {
