@@ -138,6 +138,8 @@ void Node :: acceptloop(int listen_sock, uint32_t clients, uint32_t size)
                 }
                 this->make_thread(clisock, 0);
         }
+
+        close(listen_sock);
 }
 
 void Node :: make_thread(int sock, int peerid_peer)
