@@ -122,7 +122,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t
         time_t now = time(0);
    	char* date_time = ctime(&now);
         this->Lock();
-        fprintf(this->f, "[%s]: Peer %d received the 'have' message from %d for the piece %zu. \n", date_time, peer_id_1, peer_id_2, pcno);
+        fprintf(this->f, "[%s]: Peer %d received the 'have' message from %d for the piece %d. \n", date_time, peer_id_1, peer_id_2, (uint32_t)pcno);
         this->UnLock();
 }
 
@@ -133,7 +133,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t
         time_t now = time(0);
    	char* date_time = ctime(&now);
         this->Lock();
-        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. \n", date_time, peer_id_1, pcno, peer_id_2, npcs);
+        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %d from %d. Now the number of pieces it has is %d. \n", date_time, peer_id_1, (uint32_t)pcno, peer_id_2, npcs);
         this->UnLock();
 }
 
