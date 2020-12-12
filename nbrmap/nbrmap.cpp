@@ -155,7 +155,7 @@ bool NbrMap :: earmark(Bfield *bfield_node, vector<uint8_t> &bfield_peer,
         bfield_node->diff(bfield_peer, diff);
         bool ret = false;
         for(uint32_t i=0; i<diff.size(); i++) {
-                for(int j=7; j>=0; j--) {
+                for(uint32_t j=0; j<8; j++) {
                         uint8_t mask = (uint8_t)1 << j;
                         if((diff[i] & mask) == mask) {
                                 if((ret = this->bfield.flip(i, j)) == false)

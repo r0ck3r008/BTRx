@@ -34,7 +34,7 @@ void choke_status_check(int sock, Nbr *nbr, bool choked_peer)
 void diff_to_reqs(unordered_map<uint32_t, bool> &reqs, vector<uint8_t> &diff)
 {
         for(uint32_t i=0; i<diff.size(); i++) {
-                for(int j=7; j>=0; j--) {
+                for(uint32_t j=0; j<8; j++) {
                         uint8_t mask = (uint8_t)1 << j;
                         if((diff[i] & mask) == mask)
                                 reqs[i*8 + j] = true;

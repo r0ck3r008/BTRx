@@ -36,7 +36,7 @@ Bfield :: Bfield(bool needlock, int npcs)
 * 1. Used in objmap.cpp after call from Node::connback in node.cpp
 * 2. Higher bit is high piece number in the bitfield
 * 8 7 6 5 4 3 2 1 (a single uint8_t bfield)
-* 1 1 1 1 0 0 0 0
+* 0 0 0 0 1 1 1 1
 */
 Bfield :: Bfield(bool hasfile, bool needlock, int npcs)
 {
@@ -46,8 +46,7 @@ Bfield :: Bfield(bool hasfile, bool needlock, int npcs)
         if(lftovr) {
                 if(hasfile) {
                         uint8_t mask = 0;
-                        int max = (8 - lftovr);
-                        for(int i=7; i>=max; i--)
+                        for(int i=0; i<8; i++)
                                 mask ^= ((uint8_t)1<<i);
                         this->bfield.push_back(mask);
                 } else {

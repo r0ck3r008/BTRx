@@ -97,7 +97,7 @@ void send_haves(int sock, ObjStore *ost, vector<uint8_t> &bfield_peer)
         uint32_t pcno;
         uint8_t mask;
         for(uint32_t i=0; i<bfield_peer.size(); i++) {
-                for(int j=7; j>=0; j--) {
+                for(uint32_t j=0; j<8; j++) {
                         mask = (uint8_t)1 << j;
                         pcno = i*8 + j;
                         if((bfield_peer[i] & mask) == mask && ost->exists(pcno)) {
