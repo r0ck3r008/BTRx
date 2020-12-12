@@ -95,7 +95,7 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol= IPPROTO_TCP;
 	size_t len = sizeof(struct sockaddr);
-	int sock;
+	int sock = -1;
         uint32_t i;
 
 	for(i=0; i<peer_ids.size(); i++) {
@@ -122,6 +122,7 @@ uint32_t Node :: connback(vector<int> &peer_ids, vector<string>& peer_hosts,
 			}
 		}
                 freeaddrinfo(res);
+                sock = -1;
 	}
 
         return i+1;
