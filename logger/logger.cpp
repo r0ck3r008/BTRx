@@ -136,18 +136,7 @@ void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t
         time_t now = time(0);
    	char* date_time = ctime(&now);
         this->Lock();
-        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. \n", date_time, peer_id_1, pcno, peer_id_2, pcno);
-        this->UnLock();
-}
-
-void Logger :: write_msg(LogLvlT log_lvl, int peer_id_1, int peer_id_2, uint32_t pcno, int npcs)
-{
-	if(log_lvl > (this->max_lvl))
-		return;
-        time_t now = time(0);
-   	char* date_time = ctime(&now);
-        this->Lock();
-        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. \n", date_time, peer_id_1, pcno, peer_id_2, pcno);
+        fprintf(this->f, "[%s]: Peer %d has downloaded the piece %zu from %d. Now the number of pieces it has is %d. \n", date_time, peer_id_1, pcno, peer_id_2, npcs);
         this->UnLock();
 }
 
