@@ -153,11 +153,11 @@ bool Bfield :: exists(int pos)
 /* Used by NbrMap earmark, this helps avoid multiple divisions during earmark process */
 bool Bfield :: flip(int wholes, int lftover)
 {
-	uint8_t mask = 1<<lftover;
+	uint8_t mask = (uint8_t)1<<lftover;
         bool ret = false;
 
         this->WrLock();
-        if((this->bfield[wholes] & mask) == mask) {
+        if((this->bfield[wholes] & mask) != mask) {
                 this->bfield[wholes] ^= mask;
                 ret = true;
         }
@@ -174,7 +174,7 @@ void Bfield :: flip(int pcno)
 	uint8_t mask = 1<<lftover;
 
         this->WrLock();
-        if((this->bfield[wholes] & mask) == mask)
+        if((this->bfield[wholes] & mask) != mask)
                 this->bfield[wholes] ^= mask;
         this->UnLock();
 }
