@@ -90,13 +90,15 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                 json j = json::from_bson(bson);
                 PktMsg pkt = j.get<PktMsg>();
                 choke_status_check(sock, nbr, choked_peer);
-                peerid = pkt.hshake.peerid;
                 switch(pkt.type) {
                         case Handshake:         
-                                if (peerid_peer == 0) {
-                                        lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid);
+                                peerid = pkt.hshake.peerid;
+                                if (client) {
+                                        /* If server, send handshake and log connection */
+                                        lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self,
+                                                                                peerid);
+                                        send_handshake(sock, peerid_self);
                                 }
-                                send_handshake(sock, peerid_self);
                                 nbr = nmap->register_cli(peerid);
                                 break;
                         case Choke:
@@ -122,7 +124,9 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                                 break;
                         case BitField:
                                 bfield_peer = vector<uint8_t>(pkt.bfield.bfield);
-                                send_bfield(sock, ost);
+                                if(client)
+                                        /* If server send bfield */
+                                        send_bfield(sock, ost);
                                 if((interested = nmap->earmark(ost->bfield, bfield_peer,
                                                                                 diff))) {
                                         send_interested(sock);
