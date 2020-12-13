@@ -72,7 +72,10 @@ void send_requests(int sock, unordered_map<uint32_t, bool> &reqs)
 void send_piece(int sock, uint32_t pcno, ObjStore *ost)
 {
         char buf[ost->pcsz];
-        ost->get_piece(pcno, buf);
+        if(!ost->get_piece(pcno, buf)) {
+                fprintf(stderr, "[-] Piece fetch failed\n");
+                _exit(1);
+        }
         string piece(buf);
 
         PktMsg pkt = {.type = Piece, .piece = {.pcno = pcno, .payload = piece}};
