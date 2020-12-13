@@ -11,6 +11,8 @@
 #include"handler/handler.h"
 
 using std::vector;
+using std::cout;
+using std::endl;
 using logger::LogLvlT;
 using logger::Logger;
 

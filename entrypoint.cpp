@@ -51,7 +51,7 @@ int read_peer_info(string &fname, int pid, vector<int> &peer_ids, vector<string>
         return ret;
 }
 
-void read_conf_file(string& fname, string& sh_fname, vector<int>& vals)
+void read_conf_file(string& fname, char *peerid, string& sh_fname, vector<int>& vals)
 {
 	FILE *f = NULL;
 	if((f = fopen(fname.c_str(), "r")) == NULL) {
@@ -67,7 +67,7 @@ void read_conf_file(string& fname, string& sh_fname, vector<int>& vals)
 		strncpy(tmp, line, 512 * sizeof(char));
 		char *field = strtok(tmp, " ");
 		if(!strcmp(field, "FileName"))
-			sh_fname = string(strtok(NULL, " "));
+			sh_fname = string(peerid) + string("/") + string(strtok(NULL, " "));
 		else
 			vals.push_back(strtol(strtok(NULL, " "), NULL, 10));
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 		_exit(1);
 	}
 
-	string fname = "./log_peer_" + string(argv[1]);
+	string fname = string(argv[1]) + "/log_peer_" + string(argv[1]);
 	lvar = new Logger(fname, LogLvlT::LOG_DBG);
 
         int peerid = strtol(argv[1], NULL, 10);
@@ -92,12 +92,12 @@ int main(int argc, char **argv)
 	vector<int> vals;
 	string sh_fname;
 	fname = "./Common.cfg";
-	read_conf_file(fname, sh_fname, vals);
+	read_conf_file(fname, argv[1], sh_fname, vals);
 
         vector<int> peer_ids;
 	vector<string> peer_hosts, peer_ports;
         vector<bool> peer_hasfile;
-	fname = "./peer_" + string(argv[1]) + "/" + "PeerInfo.cfg";
+	fname = "PeerInfo.cfg";
 	int port = read_peer_info(fname, peerid, peer_ids, peer_hosts, peer_ports, peer_hasfile);
 
         n_pref_peers = vals[0];

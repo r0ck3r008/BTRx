@@ -42,12 +42,6 @@ void diff_to_reqs(unordered_map<uint32_t, bool> &reqs, vector<uint8_t> &diff)
         }
 }
 
-/* TODO:
- * 1. Replace this with appropriate logger statements
- * 2. HAVE handler, possibly by mantaining a remote peer's bitfield and frequently checking
- *    if that piece becomes available.
- * 3. Absolutely check if bitfield makes sense.
- */
 void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrMap *nmap)
 {
         bool client;
