@@ -65,7 +65,7 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
         }
 
         uint32_t sz, peerid, ntimeouts = 0;
-        bool interested, choked_node = false, choked_peer = true;
+        bool interested, choked_node = false, choked_peer = false;
         Nbr *nbr = NULL;
         vector<uint8_t> diff, bfield_peer;
         unordered_map<uint32_t, bool> reqs;
