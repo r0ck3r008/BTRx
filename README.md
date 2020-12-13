@@ -7,6 +7,7 @@
 - [What is working ?](#what-is-working-)
 - [entrypoint.cpp](#entrypointcpp)
 - [handler.cpp](#handlercpp)
+- [pks.cpp](#pkscpp)
 - [node.cpp](#nodecpp)
 - [objstore.cpp](#objstorecpp)
   - [bfield.cpp](#bfieldcpp)
@@ -40,6 +41,12 @@
 `entrypoint.cpp` is responsible for parsing two major files i.e. *Common.cfg* and *PeerInfo.cfg*. It has two methods `read_conf_file` and `read_peer_info` file responsible for paring Common.cfg and PeerInfor.cfg file respectively. Once both the files is parsed, an Instance of Node object (which has file) is created responsible for accepting connection from other nodes.
 
 ## handler.cpp
+
+Handler is response for all the message it transfers between two nodes. It contains a switch case and based the type of message/packet, it forwards it to the peer.
+
+## pks.cpp
+
+Contains json definition for all the types of message.
 
 ## node.cpp
 
