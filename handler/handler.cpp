@@ -71,7 +71,6 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
         unordered_map<uint32_t, bool> reqs;
         while(true) {
                 if(!rcv_sz(sock, &sz)) {
-                        close(sock);
                         break;
                 } else if(sz == 0) {
                         /* timeout */
