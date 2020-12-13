@@ -77,7 +77,7 @@ void NbrMap :: Unlock()
 Nbr *NbrMap :: register_cli(int peerid)
 {
         Nbr *nbr = new Nbr;
-        nbr->choked = true;
+        nbr->choked = false;
         nbr->done = false;
         nbr->interested = false;
         nbr->requests = 0;
