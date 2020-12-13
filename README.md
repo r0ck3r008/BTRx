@@ -23,6 +23,18 @@
 
 ## What is working ?
 
+- Able to read Common.cfg and PeerInfo.cfg
+- Able to create logger file per node
+- Able to create LRU Cache that holds the file chunks
+- Able to create peer in a mesh pattern
+- Able to exchange handshake message
+- Able to exchange bitfield message
+- Able to exchange interested/not interested packets
+- Each node has preview of bitfield of all the nodes it is peers
+- In synchronizaiton with all the peers its connected to so that no piece is request twice to save bandwidth
+- It is able to synchronize all the request for pieces in between peers.
+- Graceful exit is possible
+  
 ## entrypoint.cpp
 
 `entrypoint.cpp` is responsible for parsing two major files i.e. *Common.cfg* and *PeerInfo.cfg*. It has two methods `read_conf_file` and `read_peer_info` file responsible for paring Common.cfg and PeerInfor.cfg file respectively. Once both the files is parsed, an Instance of Node object (which has file) is created responsible for accepting connection from other nodes.
@@ -47,7 +59,7 @@ Cache is LRU implementation that keeps information of the file that is being tra
 
 ## nbrmap.cpp
 
-nbrmap holds the list of neighbor a node connected to. Apart from node reference, it also holds various other properties such as if the node is choked or unchoked.
+nbrmap holds the list of neighbor a node is connected to. Apart from node reference, it also holds various other properties such as if the node is choked or unchoked via a shared atomic variable.
 
 ## Logger.cpp
 
