@@ -5,6 +5,6 @@
 #define CACHESZ 10027008
 
 /* In micro-seconds */
-#define RECVTIMEOUT 100000
+#define RECVTIMEOUT 500000
 
 #endif
