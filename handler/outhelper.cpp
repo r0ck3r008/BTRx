@@ -19,11 +19,11 @@ extern Logger *lvar;
 void snd(int sock, json &j)
 {
         vector<uint8_t> bson = json::to_bson(j);
-        uint8_t cmds[bson.size() + 1];
-        memset(cmds, 0, bson.size() + 1);
+        uint8_t cmds[bson.size()];
+        memset(cmds, 0, bson.size());
         copy(bson.begin(), bson.end(), cmds);
 
-        if(send(sock, cmds, bson.size() + 1, 0) < 0) {
+        if(send(sock, cmds, bson.size(), 0) < 0) {
                 lvar->write_msg(LogLvlT::LOG_ERR, "HANDLER: Send: %s",
                                 strerror(errno));
                 _exit(1);

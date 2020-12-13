@@ -96,7 +96,7 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                                 lvar->write_msg(LogLvlT::LOG_TCP_INIT, peerid_self, peerid);
                                 send_handshake(sock, peerid_self);
                                 nbr = nmap->register_cli(peerid);
-                                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid)
+                                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid);
                                 break;
                         case Choke:
                                 choked_node = true;
