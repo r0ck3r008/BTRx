@@ -8,7 +8,7 @@ ALL_OBJS := entrypoint.o logger/*.o node/*.o objstore/*.o handler/*.o pkts/*.o n
 all: btrx.bin
 
 btrx.bin: entrypoint.o logger_objs node_objs objstore_objs handler_objs pkts_objs nbrmap_objs
-	${COMPILER} ${LINKER_FLAGS} ${ALL_OBJS} -o peer
+	${COMPILER} ${LINKER_FLAGS} ${ALL_OBJS} -o tmp/peer
 	$(MAKE) clean_objs
 
 entrypoint.o: entrypoint.cpp
