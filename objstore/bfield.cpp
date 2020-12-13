@@ -30,6 +30,15 @@ Bfield :: Bfield(bool needlock, int npcs)
 {
         this->bfield = vector<uint8_t>(npcs, 0);
         this->needlock = needlock;
+        if(this->needlock) {
+                int stat = 0;
+                this->rwlock = PTHREAD_RWLOCK_INITIALIZER;
+                if((stat = pthread_rwlock_init(&(this->rwlock), NULL)) != 0) {
+                        lvar->write_msg(LogLvlT::LOG_DBG, "NODE: RWLock Init: %s",
+                                        strerror(stat));
+                        _exit(1);
+                }
+        }
 }
 
 /*
