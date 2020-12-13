@@ -54,7 +54,6 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
         if(peerid_peer == 0) {
                 /* This is a server */
                 cout << peerid_self << " connection accepted from " << peerid_peer << endl;
-                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid_peer);
                 client = true;
         } else {
                 /* This is a client */
@@ -95,6 +94,9 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                 peerid = pkt.hshake.peerid;
                 switch(pkt.type) {
                         case Handshake:         
+                                if (peerid_peer == 0) {
+                                        lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid);
+                                }
                                 send_handshake(sock, peerid_self);
                                 nbr = nmap->register_cli(peerid);
                                 break;
