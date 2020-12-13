@@ -54,10 +54,12 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
         if(peerid_peer == 0) {
                 /* This is a server */
                 cout << peerid_self << " connection accepted from " << peerid_peer << endl;
+                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid_peer);
                 client = true;
         } else {
                 /* This is a client */
                 cout << peerid_self << "connected to: " << peerid_peer << endl;
+                lvar->write_msg(LogLvlT::LOG_TCP_INIT, peerid_self, peerid_peer);
                 client = false;
                 send_handshake(sock, peerid_self);
                 send_bfield(sock, ost);
@@ -92,11 +94,9 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                 choke_status_check(sock, nbr, choked_peer);
                 peerid = pkt.hshake.peerid;
                 switch(pkt.type) {
-                        case Handshake:                                
-                                lvar->write_msg(LogLvlT::LOG_TCP_INIT, peerid_self, peerid);
+                        case Handshake:         
                                 send_handshake(sock, peerid_self);
                                 nbr = nmap->register_cli(peerid);
-                                lvar->write_msg(LogLvlT::LOG_TCP_FIN, peerid_self, peerid);
                                 break;
                         case Choke:
                                 choked_node = true;
