@@ -128,7 +128,7 @@ void cli_handler(int sock, int peerid_self, int peerid_peer, ObjStore *ost, NbrM
                                         /* If server send bfield */
                                         send_bfield(sock, ost);
                                 if((interested = nmap->earmark(ost->bfield, bfield_peer,
-                                                                                diff))) {
+                                                                        diff)) == true) {
                                         send_interested(sock);
                                         diff_to_reqs(reqs, diff);
                                         if(!client && !choked_node)
